@@ -2,14 +2,17 @@
 
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/glob.php");
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/vendor/autoload.php");
+include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/src/dataobject/TStock.php");
+
+
 use Medoo\Medoo;
 
 
-class TStocks
+class TVentas
 {
     private $rt;
     private $database;
-    private $table = 'stockmateriales';
+    private $table = 'ventas';
     public function __construct(){
         $this->database = new Medoo([
             // required
@@ -31,9 +34,7 @@ class TStocks
         );
     }
 
-
-
-    public function getStocks()
+    public function getVentas()
     {
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
@@ -52,9 +53,9 @@ class TStocks
         return $this->rt;
     }
 
-    public function getStocksById($id)
+    public function getVentasByVendedor($vendedor)
     {
-        $data = $this->database->select($this->table,'*', ['id'=>$id]);
+        $data = $this->database->select($this->table,'*', ['usuario_vendedor'=>$vendedor]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -71,13 +72,9 @@ class TStocks
         return $this->rt;
     }
 
-       
-    public function insertStock($idMaterial)
+    public function getVentasByMaterial($tipo_material)
     {
-        $data = $this->database->insert($this->table,[
-            'id_material' => $idMaterial
-        ]);
-
+        $data = $this->database->select($this->table,'*', ['tipo_material'=>$tipo_material]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -88,53 +85,55 @@ class TStocks
             if($data && count($data) > 0)
             {
                 $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                $this->rt['data'] = $data;   
             }
         }
         return $this->rt;
     }
 
-
-    public function updateStocks($idMaterial, $cantidad, $operacion)
+   
+    public function insertVenta($usuario_vendedor, $tipo_material, $peso, $valor, $fecha_venta)
     {
-        //operacion puede ser "suma" o "resta"
-
-        $existe = getStocksById($idMaterial);
-
-        if($existe['error'] == 0 && count($existe['data']) > 0)
-        {
-            $stock = ($operacion === 'suma') ? $existe['data'][0]['stock'] + $cantidad : $existe['data'][0]['stock'] - $cantidad ;
-            $this->database->update($this->table,[
-                'stock' =>  $stock
-            ], ['id_material' => $idMaterial]);
     
-            if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+       $stock = new TStocks();
+       $movimiento = $stock->updateStocks($tipo_material, $peso, 'resta'); //movimiento de stock
+
+       if($movimiento['error'] == 0)
+       {
+            if($lote['error'] == 0)
             {
-                $this->rt['error'] = $this->database->error()[1];
-                $this->rt['mensaje'] = $this->database->error()[2];
+                $this->database->insert($this->table,[
+                    'usuario_vendedor' => $usuario_vendedor, 
+                    'tipo_material' => $tipo_material, 
+                    'peso' => $peso, 
+                    'valor' => $valor, 
+                    'fecha_venta' => $fecha_venta
+                ]);
+        
+                if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+                {
+                    $movimiento = $stock->updateStocks($tipo_material, $peso, 'suma'); //RollBack
+                    $this->rt['error'] = $this->database->error()[1];
+                    $this->rt['mensaje'] = $this->database->error()[2];
+                }
+                else
+                {
+                    $this->rt['error'] = 0;
+                    $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                }
             }
             else
             {
-                if($data && count($data) > 0)
-                {
-                    $this->rt['error'] = 0;
-                    $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
-                }
+                $this->rt = $lote;
             }
-        }
-        else
-        {
-            $this->rt['error'] = 2;
-            $this->rt['mensaje'] = "No existe tipo de material para actualizar el stock";
-        }
-        
+       }
+       else
+       {
+            $this->rt = $movimiento;
+       }
+
         return $this->rt;
     }
-
-
-
-
-
 
 
 }

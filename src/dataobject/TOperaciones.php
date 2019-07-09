@@ -74,7 +74,7 @@ class TOperaciones
        
     public function insertOperacion($tipo)
     {
-        $data = $this->database->insert($this->table,['tipo' => $tipo]);
+        $this->database->insert($this->table,['tipo' => $tipo]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -83,18 +83,15 @@ class TOperaciones
         }
         else
         {
-            if($data && count($data) > 0)
-            {
-                $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
-            }
+            $this->rt['error'] = 0;
+            $this->rt['mensaje'] = "Datos grabados con éxito..!!";
         }
         return $this->rt;
     }
 
     public function updateOperacion($id, $tipo)
     {
-        $data = $this->database->update($this->table,['tipo' => $tipo], ['id' => $id]);
+        $this->database->update($this->table,['tipo' => $tipo], ['id' => $id]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -103,11 +100,8 @@ class TOperaciones
         }
         else
         {
-            if($data && count($data) > 0)
-            {
-                $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
-            }
+            $this->rt['error'] = 0;
+            $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
         }
         return $this->rt;
     }
@@ -115,7 +109,7 @@ class TOperaciones
 
     public function deleteOperacion($id)
     {
-        $data = $this->database->delete($this->table,['id' => $id]);
+        $this->database->delete($this->table,['id' => $id]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -124,11 +118,8 @@ class TOperaciones
         }
         else
         {
-            if($data && count($data) > 0)
-            {
-                $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Dato eliminado con éxito..!!";
-            }
+            $this->rt['error'] = 0;
+            $this->rt['mensaje'] = "Dato eliminado con éxito..!!";
         }
         return $this->rt;
     }

@@ -93,7 +93,7 @@ class TProveedores
    
     public function insertProveedor($ruc, $nombres, $apellidos, $direccion, $telefono)
     {
-        $data = $this->database->insert($this->table,[
+        $this->database->insert($this->table,[
             'ruc' => $ruc, 
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
@@ -108,18 +108,15 @@ class TProveedores
         }
         else
         {
-            if($data && count($data) > 0)
-            {
-                $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
-            }
+            $this->rt['error'] = 0;
+            $this->rt['mensaje'] = "Datos grabados con éxito..!!";
         }
         return $this->rt;
     }
 
     public function updateProveedor($id, $ruc, $nombres, $apellidos, $direccion, $telefono)
     {
-        $data = $this->database->update($this->table,[
+        $this->database->update($this->table,[
             'ruc' => $ruc, 
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
@@ -134,11 +131,8 @@ class TProveedores
         }
         else
         {
-            if($data && count($data) > 0)
-            {
-                $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
-            }
+            $this->rt['error'] = 0;
+            $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
         }
         return $this->rt;
     }

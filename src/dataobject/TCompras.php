@@ -5,11 +5,11 @@ include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/vendor/autoload.php");
 use Medoo\Medoo;
 
 
-class TStocks
+class TCompras
 {
     private $rt;
     private $database;
-    private $table = 'stockmateriales';
+    private $table = 'compras';
     public function __construct(){
         $this->database = new Medoo([
             // required
@@ -31,9 +31,7 @@ class TStocks
         );
     }
 
-
-
-    public function getStocks()
+    public function getCompras()
     {
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
@@ -52,7 +50,7 @@ class TStocks
         return $this->rt;
     }
 
-    public function getStocksById($id)
+    public function getComprasById($id)
     {
         $data = $this->database->select($this->table,'*', ['id'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
@@ -71,13 +69,9 @@ class TStocks
         return $this->rt;
     }
 
-       
-    public function insertStock($idMaterial)
+    public function getComprasByRuc($ruc)
     {
-        $data = $this->database->insert($this->table,[
-            'id_material' => $idMaterial
-        ]);
-
+        $data = $this->database->select($this->table,'*', ['ruc'=>$ruc]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -88,25 +82,24 @@ class TStocks
             if($data && count($data) > 0)
             {
                 $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                $this->rt['data'] = $data;   
             }
         }
         return $this->rt;
     }
 
-
-    public function updateStocks($idMaterial, $cantidad, $operacion)
+   
+    public function insertCompra($cliente, $valor_total, $material, $peso, $vendedor, $fechaIniciaCompra, $fechaFinCompr)
     {
-        //operacion puede ser "suma" o "resta"
+        $lote = insertPreLote($material, $peso, $vendedor, $fechaIniciaCompra, $fechaFinCompra);
 
-        $existe = getStocksById($idMaterial);
-
-        if($existe['error'] == 0 && count($existe['data']) > 0)
+        if($lote['error'] == 0)
         {
-            $stock = ($operacion === 'suma') ? $existe['data'][0]['stock'] + $cantidad : $existe['data'][0]['stock'] - $cantidad ;
-            $this->database->update($this->table,[
-                'stock' =>  $stock
-            ], ['id_material' => $idMaterial]);
+            $this->database->insert($this->table,[
+                'cliente' => $cliente, 
+                'lote' => $lote['data'], 
+                'valor_total' => $valor_total
+            ]);
     
             if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
             {
@@ -115,21 +108,43 @@ class TStocks
             }
             else
             {
-                if($data && count($data) > 0)
-                {
-                    $this->rt['error'] = 0;
-                    $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
-                }
+                $this->rt['error'] = 0;
+                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
             }
         }
         else
         {
-            $this->rt['error'] = 2;
-            $this->rt['mensaje'] = "No existe tipo de material para actualizar el stock";
+            $this->rt = $lote;
         }
-        
         return $this->rt;
     }
+
+    
+
+    public function insertPreLote($material, $peso, $vendedor, $fechaIniciaCompra, $fechaFinCompra)
+    {
+        $this->database->insert('lote',[
+            'proceso_venta' => 1, 
+            'usuario_venta' => $vendedor, 
+            'fecha_ini_compra' => $fechaIniciaCompra, 
+            'fecha_fin_compra' => $fechaFinCompra, 
+            'material' => $material,
+            'peso' => $peso
+        ]);
+
+        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+        {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        }
+        else
+        {
+            $this->rt['error'] = 0;
+            $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+            $this->rt['data'] = $database->id();
+        }
+        return $this->rt;
+    }    
 
 
 
