@@ -24,6 +24,10 @@ class TStocks
             'port' => SQL_PORT
         ]);
 
+        setResult();
+    }
+
+    public function setResult(){
         $this->rt = array(
             'error'=> 0,
             'mensaje' => null,
@@ -31,10 +35,9 @@ class TStocks
         );
     }
 
-
-
     public function getStocks()
     {
+        setResult();
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -54,6 +57,7 @@ class TStocks
 
     public function getStocksById($id)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['id'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -74,6 +78,7 @@ class TStocks
        
     public function insertStock($idMaterial)
     {
+        setResult();
         $data = $this->database->insert($this->table,[
             'id_material' => $idMaterial
         ]);
@@ -98,7 +103,7 @@ class TStocks
     public function updateStocks($idMaterial, $cantidad, $operacion)
     {
         //operacion puede ser "suma" o "resta"
-
+        setResult();
         $existe = getStocksById($idMaterial);
 
         if($existe['error'] == 0 && count($existe['data']) > 0)
@@ -130,12 +135,6 @@ class TStocks
         
         return $this->rt;
     }
-
-
-
-
-
-
 
 }
 

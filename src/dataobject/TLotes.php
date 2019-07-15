@@ -25,6 +25,10 @@ class TLotes
             'port' => SQL_PORT
         ]);
 
+        setResult();
+    }
+
+    public function setResult(){
         $this->rt = array(
             'error'=> 0,
             'mensaje' => null,
@@ -32,10 +36,9 @@ class TLotes
         );
     }
 
-
-
     public function getLotes()
     {
+        setResult();
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -55,6 +58,7 @@ class TLotes
 
     public function getLotesById($id)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['id'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -74,6 +78,7 @@ class TLotes
 
     public function getLotesByPendingSeleccion()
     {
+        setResult();
         $data = $this->database->select($this->table,'*', [
             'proceso_venta' => 1, 
             'proceso_selecciona'=> 0, 
@@ -98,6 +103,7 @@ class TLotes
 
     public function getLotesByPendingProcesar()
     {
+        setResult();
         $data = $this->database->select($this->table,'*', [
             'proceso_venta' => 1, 
             'proceso_selecciona'=> 1, 
@@ -122,6 +128,7 @@ class TLotes
 
     public function getLotesByPendingAlmacenar()
     {
+        setResult();
         $data = $this->database->select($this->table,'*', [
             'proceso_venta' => 1, 
             'proceso_selecciona'=> 1, 
@@ -149,6 +156,7 @@ class TLotes
 
     public function updateLoteSetProcessSeleccion($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
     {
+        setResult();
         $this->database->update($this->table,[
             'proceso_selecciona' => 1,
             'usuario_selecciona' => $usuarioProcess,
@@ -171,6 +179,7 @@ class TLotes
 
     public function updateLoteSetProcessProceso($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
     {
+        setResult();
         $this->database->update($this->table,[
             'proceso_procesar' => 1,
             'usuario_procesa' => $usuarioProcess,
@@ -194,7 +203,7 @@ class TLotes
 
     public function updateLoteSetProcessAlmacena($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
     {
-
+        setResult();
         $material = getLotesById($lote); //obtener el tipo de material
         $movimiento = array('error'=> -256,'mensaje' => null,'data' => null); 
 

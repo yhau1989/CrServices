@@ -24,6 +24,11 @@ class TMateriales
             'port' => SQL_PORT
         ]);
 
+        setResult();
+    }
+
+
+    public function setResult(){
         $this->rt = array(
             'error'=> 0,
             'mensaje' => null,
@@ -31,10 +36,9 @@ class TMateriales
         );
     }
 
-
-
     public function getMateriales()
     {
+        setResult();
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -54,6 +58,7 @@ class TMateriales
 
     public function getMaterialesById($id)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['id'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -74,6 +79,7 @@ class TMateriales
        
     public function insertMaterial($tipo)
     {
+        setResult();
         $this->database->insert($this->table,['tipo' => $tipo]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
@@ -91,6 +97,7 @@ class TMateriales
 
     public function updateMaterial($id, $tipo)
     {
+        setResult();
         $this->database->update($this->table,['tipo' => $tipo], ['id' => $id]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))

@@ -24,6 +24,10 @@ class TClientes
             'port' => SQL_PORT
         ]);
 
+        setResult();
+    }
+
+    public function setResult(){
         $this->rt = array(
             'error'=> 0,
             'mensaje' => null,
@@ -31,10 +35,9 @@ class TClientes
         );
     }
 
-
-
     public function getClientes()
     {
+        setResult();
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -54,6 +57,7 @@ class TClientes
 
     public function getClientesById($id)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['id'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -73,6 +77,7 @@ class TClientes
 
     public function getClientesByRuc($ruc)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['ruc'=>$ruc]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -93,6 +98,7 @@ class TClientes
    
     public function insertCliente($ruc, $nombres, $apellidos, $direccion, $telefono)
     {
+        setResult();
         $this->database->insert($this->table,[
             'ruc' => $ruc, 
             'nombres' => $nombres, 
@@ -116,6 +122,7 @@ class TClientes
 
     public function updateCliente($id, $ruc, $nombres, $apellidos, $direccion, $telefono)
     {
+        setResult();
         $this->database->update($this->table,[
             'ruc' => $ruc, 
             'nombres' => $nombres, 

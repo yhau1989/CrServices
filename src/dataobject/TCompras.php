@@ -24,6 +24,10 @@ class TCompras
             'port' => SQL_PORT
         ]);
 
+        setResult();
+    }
+
+    public function setResult(){
         $this->rt = array(
             'error'=> 0,
             'mensaje' => null,
@@ -33,6 +37,7 @@ class TCompras
 
     public function getCompras()
     {
+        setResult();
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -52,6 +57,7 @@ class TCompras
 
     public function getComprasById($id)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['id'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -71,6 +77,7 @@ class TCompras
 
     public function getComprasByRuc($ruc)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['ruc'=>$ruc]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -91,6 +98,7 @@ class TCompras
    
     public function insertCompra($cliente, $valor_total, $material, $peso, $vendedor, $fechaIniciaCompra, $fechaFinCompr)
     {
+        setResult();
         $lote = insertPreLote($material, $peso, $vendedor, $fechaIniciaCompra, $fechaFinCompra);
 
         if($lote['error'] == 0)
@@ -123,6 +131,7 @@ class TCompras
 
     public function insertPreLote($material, $peso, $vendedor, $fechaIniciaCompra, $fechaFinCompra)
     {
+        setResult();
         $this->database->insert('lote',[
             'proceso_venta' => 1, 
             'usuario_venta' => $vendedor, 

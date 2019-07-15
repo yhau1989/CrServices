@@ -24,6 +24,11 @@ class TUsuarios
             'port' => SQL_PORT
         ]);
 
+        setResult();
+    }
+
+    public function setResult()
+    {
         $this->rt = array(
             'error'=> 0,
             'mensaje' => null,
@@ -35,6 +40,7 @@ class TUsuarios
 
     public function getUsuarios()
     {
+        setResult();
         $data = $this->database->select($this->table,'*',['estado'=>1]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -54,6 +60,7 @@ class TUsuarios
 
     public function getUsuariosById($id)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['id'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -73,6 +80,7 @@ class TUsuarios
 
     public function getUsuariosByEmail($email)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['email'=>$email]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -93,6 +101,7 @@ class TUsuarios
 
     public function insertUsuario($nombres, $apellidos, $email, $password, $estado)
     {
+        setResult();
         $data = $this->database->insert($this->table,[
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
@@ -120,27 +129,40 @@ class TUsuarios
 
     public function updateUsuario($id, $nombres, $apellidos, $email, $password, $estado)
     {
-        $data = $this->database->update($this->table,[
+        setResult();
+        $verifica = $this->getUsuariosById($id);
+
+        if($verifica['error'] == 0)
+        {
+            $pass = ($verifica['data'][0]['password'] === MD5($password)) ? $verifica['data'][0]['password'] : MD5($password);
+
+            $data = $this->database->update($this->table,[
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
             'email' => $email, 
-            'password' => MD5($password), 
-            'estado' => $estado
-        ], ['id' => $id]);
+            'password' => $pass, 
+            'estado' => $estado], ['id' => $id]);
 
-        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-        {
-            $this->rt['error'] = $this->database->error()[1];
-            $this->rt['mensaje'] = $this->database->error()[2];
+            if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+            {
+                $this->rt['error'] = $this->database->error()[1];
+                $this->rt['mensaje'] = $this->database->error()[2];
+            }
+            else
+            {
+                if($data && count($data) > 0)
+                {
+                    $this->rt['error'] = 0;
+                    $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
+                }
+            }
         }
         else
         {
-            if($data && count($data) > 0)
-            {
-                $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
-            }
+            $this->rt['error'] = 1;
+            $this->rt['mensaje'] = "No existe id de usuario";
         }
+                
         return $this->rt;
     }
 

@@ -34,7 +34,7 @@ Parametros de Salida:
 
 #### Editar usuario: http://localhost/CrServices/api/usr/usredit.php
 
-Parametros de entrada: Solo enviar los campos que desee editar
+Parametros de entrada:
 ```javascript
 // Solo enviar los campos que desee editar
 {

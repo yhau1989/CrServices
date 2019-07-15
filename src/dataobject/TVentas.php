@@ -27,6 +27,11 @@ class TVentas
             'port' => SQL_PORT
         ]);
 
+        setResult();
+    }
+
+    public function setResult()
+    {
         $this->rt = array(
             'error'=> 0,
             'mensaje' => null,
@@ -36,6 +41,7 @@ class TVentas
 
     public function getVentas()
     {
+        setResult();
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -55,6 +61,7 @@ class TVentas
 
     public function getVentasByVendedor($vendedor)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['usuario_vendedor'=>$vendedor]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -74,6 +81,7 @@ class TVentas
 
     public function getVentasByMaterial($tipo_material)
     {
+        setResult();
         $data = $this->database->select($this->table,'*', ['tipo_material'=>$tipo_material]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -94,7 +102,7 @@ class TVentas
    
     public function insertVenta($usuario_vendedor, $tipo_material, $peso, $valor, $fecha_venta)
     {
-    
+        setResult();
        $stock = new TStocks();
        $movimiento = $stock->updateStocks($tipo_material, $peso, 'resta'); //movimiento de stock
 
