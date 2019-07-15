@@ -97,7 +97,7 @@ class TUsuarios
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
             'email' => $email, 
-            'password' => $password, 
+            'password' => MD5($password), 
             'estado' => $estado
         ]);
 
@@ -112,6 +112,7 @@ class TUsuarios
             {
                 $this->rt['error'] = 0;
                 $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                $this->rt['data'] =   $this->database->id();
             }
         }
         return $this->rt;
@@ -123,7 +124,7 @@ class TUsuarios
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
             'email' => $email, 
-            'password' => $password, 
+            'password' => MD5($password), 
             'estado' => $estado
         ], ['id' => $id]);
 
