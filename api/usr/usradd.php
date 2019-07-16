@@ -1,6 +1,7 @@
 <?php
 
 require_once "../../src/dataobject/TUsuarios.php";
+require_once "../../src/smtp/Smtp.php";
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -24,7 +25,14 @@ if($decode){
     {
         $ft = new TUsuarios();
         $response = $ft->insertUsuario($decode->user->nombres, $decode->user->apellidos, $decode->user->email, $decode->user->password, $decode->user->estado);
-        
+
+        if($response["error"] == 0)
+        {
+            $url = URL_CONFIRMACION ."?usr=" . $response["data"] . "&ps=" . md5($decode->user->password);
+            $response["data"] =  $url;
+            /*  $gt = new Smtp();
+            $gt->confirmarRegistro($decode->user->nombres, $url, $decode->user->email);*/
+        }        
     }
     
 }

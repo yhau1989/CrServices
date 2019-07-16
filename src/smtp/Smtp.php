@@ -1,6 +1,5 @@
 <?php
 
-include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/glob.php");
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/vendor/autoload.php");
 
 use \Mailjet\Resources;

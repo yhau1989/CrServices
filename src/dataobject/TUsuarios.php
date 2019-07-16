@@ -24,7 +24,7 @@ class TUsuarios
             'port' => SQL_PORT
         ]);
 
-        setResult();
+        $this->setResult();
     }
 
     public function setResult()
@@ -40,7 +40,7 @@ class TUsuarios
 
     public function getUsuarios()
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*',['estado'=>1]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -60,7 +60,7 @@ class TUsuarios
 
     public function getUsuariosById($id)
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*', ['id'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -80,7 +80,7 @@ class TUsuarios
 
     public function getUsuariosByEmail($email)
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*', ['email'=>$email]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -101,7 +101,7 @@ class TUsuarios
 
     public function insertUsuario($nombres, $apellidos, $email, $password, $estado)
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->insert($this->table,[
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
@@ -129,7 +129,7 @@ class TUsuarios
 
     public function updateUsuario($id, $nombres, $apellidos, $email, $password, $estado)
     {
-        setResult();
+        $this->setResult();
         $verifica = $this->getUsuariosById($id);
 
         if($verifica['error'] == 0)

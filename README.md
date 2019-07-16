@@ -41,11 +41,11 @@ Parametros de entrada:
     "user":
     {
         "id": 8, //campo obligatotio 
-        "nombres": "Orlando", 
-        "apellidos": "Wong", 
-        "email": "thewong26@hotmail.com", 
-        "password": "samo562966",
-        "estado": 3
+        "nombres": "Orlando",  //campo obligatotio 
+        "apellidos": "Wong",  //campo obligatotio 
+        "email": "thewong26@hotmail.com",  //campo obligatotio 
+        "password": "samo562966", //campo obligatotio 
+        "estado": 3 //campo obligatotio 
     }
 }
 ```

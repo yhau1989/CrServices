@@ -5,6 +5,9 @@ define("SQL_USER", "root");
 define("SQL_PASS", "");
 define("SQL_PORT", 3306);
 define("DATABASE", "bcrapp");
+define("URL_CONFIRMACION", "http://localhost/CrServices/");
+
+
 /*
 Google
 23.251.148.193
