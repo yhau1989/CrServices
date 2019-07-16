@@ -1,5 +1,6 @@
 {
     "require": {
-        "catfan/medoo": "^1.6"
+        "catfan/medoo": "^1.6",
+        "mailjet/mailjet-apiv3-php": "^1.4"
     }
 }
