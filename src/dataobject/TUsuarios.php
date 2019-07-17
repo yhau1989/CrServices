@@ -169,6 +169,30 @@ class TUsuarios
 
 
 
+    public function login($email, $password)
+    {
+        $this->setResult();
+        $data = $this->database->select($this->table,'*', ['email'=>$email, 'password'=> MD5($password), 'estado' => 1, 'admin' => 0]);
+        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+        {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        }
+        else
+        {
+            if($data && count($data) > 0)
+            {
+                $this->rt['error'] = 0;
+                $this->rt['mensaje'] = 'ok';   
+            }
+            else
+            {
+                $this->rt['error'] = 1;
+                $this->rt['mensaje'] = 'Usuario o clave incorrectos'; 
+            }
+        }
+        return $this->rt;
+    }
 
 
 

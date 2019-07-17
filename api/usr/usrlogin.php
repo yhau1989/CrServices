@@ -12,9 +12,8 @@ $decode = json_decode(file_get_contents("php://input"));
 
 
 if($decode){
-    if(!(isset($decode) || isset($decode->user) || isset($decode->user->nombres) 
-        || isset($decode->user->apellidos) || isset($decode->user->email) || isset($decode->user->password) 
-        || isset($decode->user->estado)))
+    if(!(isset($decode) || isset($decode->login) || isset($decode->login->user) 
+        || isset($decode->login->password) ))
     {
        $response = array(
            'error' => 'error',
@@ -24,15 +23,7 @@ if($decode){
     else
     {
         $ft = new TUsuarios();
-        $response = $ft->insertUsuario($decode->user->nombres, $decode->user->apellidos, $decode->user->email, $decode->user->password, $decode->user->estado);
-
-        if($response["error"] == 0)
-        {
-            $url = URL_CONFIRMACION . $response["data"] . "/" . md5($decode->user->password);
-            $response["data"] =  $url;
-            /*  $gt = new Smtp();
-            $gt->confirmarRegistro($decode->user->nombres, $url, $decode->user->email);*/
-        }        
+        $response = $ft->login($decode->login->user, $decode->login->password);              
     }    
 }
 else

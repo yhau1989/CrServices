@@ -15,8 +15,8 @@ Parametros de entrada:
     {
         "nombres": "Orlando",  //campo obligatotio 
         "apellidos": "Wong",  //campo obligatotio 
-        "email": "thewong26@hotmail.com",  //campo obligatotio 
-        "password": "samo562966", //campo obligatotio 
+        "email": "dirección de correo",  //campo obligatotio 
+        "password": "xxx", //campo obligatotio 
         "estado": 3 //campo obligatotio 
     }
 }
@@ -43,8 +43,8 @@ Parametros de entrada:
         "id": 8, //campo obligatotio 
         "nombres": "Orlando",  //campo obligatotio 
         "apellidos": "Wong",  //campo obligatotio 
-        "email": "thewong26@hotmail.com",  //campo obligatotio 
-        "password": "samo562966", //campo obligatotio 
+        "email": "dirección de correo",  //campo obligatotio 
+        "password": "xxxx", //campo obligatotio 
         "estado": 3 //campo obligatotio 
     }
 }
@@ -56,5 +56,28 @@ Parametros de Salida:
     "error": 0,
     "mensaje": "Datos grabados con éxito..!!",
     "data": "8"
+}
+```
+
+
+#### Login usuario: http://localhost/CrServices/api/usr/usrlogin.php
+
+Parametros de entrada:
+```javascript
+// Solo enviar los campos que desee editar
+{
+    "login":{
+        "user": "dirección de correo", //campo obligatotio 
+        "password":"xxx" //campo obligatotio 
+    }
+}
+```
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": "ok",
+    "data": null
 }
 ```
