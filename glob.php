@@ -6,6 +6,7 @@ define("SQL_PASS", "");
 define("SQL_PORT", 3306);
 define("DATABASE", "bcrapp");
 define("URL_CONFIRMACION", "http://localhost/crsite/tmp/confirmacion/");
+define("URL_RESET", "http://localhost/crsite/tmp/rst/");
 
 
 /*

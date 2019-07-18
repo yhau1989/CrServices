@@ -22,8 +22,15 @@ if($decode){
     {
         $ft = new TUsuarios();
         $response = $ft->InsertResetPassword($decode->reset->email); 
-        
-        
+
+        if($response["error"] == 0)
+        {
+            $url = URL_RESET . $response["data"] ;
+            $response["data"] =  $url;
+            
+            /*$gt = new Smtp();
+            $gt->recuperarPassword($url, $decode->reset->email);*/
+        }  
     }    
 }
 else

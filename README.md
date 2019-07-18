@@ -81,3 +81,26 @@ Parametros de Salida:
     "data": null
 }
 ```
+
+
+
+#### Reset password usuario: http://localhost/CrServices/api/usr/usrpwsreset.php
+
+Parametros de entrada:
+```javascript
+// Solo enviar los campos que desee editar
+{
+    "reset":{
+        "email": "xxxx" //campo obligatotio 
+    }
+}
+```
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": null,
+    "data": "http://localhost/crsite/tmp/rst/09d547c0d8fa35c3a845c6a5aa19935f"
+}
+```
