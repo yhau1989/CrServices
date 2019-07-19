@@ -104,3 +104,49 @@ Parametros de Salida:
     "data": "http://localhost/crsite/tmp/rst/09d547c0d8fa35c3a845c6a5aa19935f"
 }
 ```
+
+
+### Materiales
+
+#### List Materiales: http://localhost/CrServices/api/mtr/mtrlist.php
+
+No tiene Parametros de entrada:
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": null,
+    "data": [
+        {
+            "id": "1",
+            "tipo": "Plastico Soplado"
+        },
+        {
+            "id": "2",
+            "tipo": "Plastico Hogar"
+        },
+        {
+            "id": "3",
+            "tipo": "Plastico Silla"
+        },
+        {
+            "id": "4",
+            "tipo": "Metal (Hierro)"
+        },
+        {
+            "id": "5",
+            "tipo": "Metal (Aluminio)"
+        },
+        {
+            "id": "6",
+            "tipo": "Metal (Cobre)"
+        },
+        {
+            "id": "7",
+            "tipo": "Papel"
+        }
+    ]
+}
+
+```
