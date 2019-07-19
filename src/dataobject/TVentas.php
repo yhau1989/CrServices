@@ -2,7 +2,7 @@
 
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/glob.php");
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/vendor/autoload.php");
-include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/src/dataobject/TStock.php");
+include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/src/dataobject/TStocks.php");
 
 
 use Medoo\Medoo;
@@ -27,7 +27,7 @@ class TVentas
             'port' => SQL_PORT
         ]);
 
-        setResult();
+        $this->setResult();
     }
 
     public function setResult()
@@ -41,7 +41,7 @@ class TVentas
 
     public function getVentas()
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -61,7 +61,7 @@ class TVentas
 
     public function getVentasByVendedor($vendedor)
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*', ['usuario_vendedor'=>$vendedor]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -81,7 +81,7 @@ class TVentas
 
     public function getVentasByMaterial($tipo_material)
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*', ['tipo_material'=>$tipo_material]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -102,7 +102,7 @@ class TVentas
    
     public function insertVenta($usuario_vendedor, $tipo_material, $peso, $valor, $fecha_venta)
     {
-        setResult();
+        $this->setResult();
        $stock = new TStocks();
        $movimiento = $stock->updateStocks($tipo_material, $peso, 'resta'); //movimiento de stock
 

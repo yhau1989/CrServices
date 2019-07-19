@@ -244,7 +244,15 @@ class TLotes
 
         return $this->rt;
 
-        
+    }
+
+
+
+
+
+    public function insertLote($proceso_compra, $usuario_compra, $fecha_ini_compra, $fecha_fin_compra, $proceso_selecciona, $usuario_selecciona, $fecha_ini_selecciona, $fecha_fin_selecciona, $proceso_procesar, $usuario_procesa, $fecha_ini_procesa, $fecha_fin_procesa, $proceso_almacenar, $usuario_almacena, $fecha_ini_almacena, $fecha_fin_almacena, $material, $peso)
+    {
+
     }
 
 

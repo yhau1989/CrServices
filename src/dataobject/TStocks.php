@@ -24,7 +24,7 @@ class TStocks
             'port' => SQL_PORT
         ]);
 
-        setResult();
+        $this->setResult();
     }
 
     public function setResult(){
@@ -37,7 +37,7 @@ class TStocks
 
     public function getStocks()
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -57,8 +57,8 @@ class TStocks
 
     public function getStocksById($id)
     {
-        setResult();
-        $data = $this->database->select($this->table,'*', ['id'=>$id]);
+        $this->setResult();
+        $data = $this->database->select($this->table,'*', ['id_material'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -78,7 +78,7 @@ class TStocks
        
     public function insertStock($idMaterial)
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->insert($this->table,[
             'id_material' => $idMaterial
         ]);
@@ -90,11 +90,8 @@ class TStocks
         }
         else
         {
-            if($data && count($data) > 0)
-            {
                 $this->rt['error'] = 0;
                 $this->rt['mensaje'] = "Datos grabados con éxito..!!";
-            }
         }
         return $this->rt;
     }
@@ -103,27 +100,49 @@ class TStocks
     public function updateStocks($idMaterial, $cantidad, $operacion)
     {
         //operacion puede ser "suma" o "resta"
-        setResult();
-        $existe = getStocksById($idMaterial);
+        $this->setResult();
+        $existe = $this->getStocksById($idMaterial);
+
+
+        
 
         if($existe['error'] == 0 && count($existe['data']) > 0)
         {
-            $stock = ($operacion === 'suma') ? $existe['data'][0]['stock'] + $cantidad : $existe['data'][0]['stock'] - $cantidad ;
-            $this->database->update($this->table,[
-                'stock' =>  $stock
-            ], ['id_material' => $idMaterial]);
+            if($operacion === 'suma'){
+                $stock = $existe['data'][0]['stock'] + $cantidad;
+
+                $this->database->update($this->table,['stock' =>  $stock], ['id_material' => $idMaterial]);
     
-            if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-            {
-                $this->rt['error'] = $this->database->error()[1];
-                $this->rt['mensaje'] = $this->database->error()[2];
+                    if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+                    {
+                        $this->rt['error'] = $this->database->error()[1];
+                        $this->rt['mensaje'] = $this->database->error()[2];
+                    }
+                    else
+                    {
+                            $this->rt['error'] = 0;
+                            $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
+                    }
             }
-            else
-            {
-                if($data && count($data) > 0)
-                {
-                    $this->rt['error'] = 0;
-                    $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
+            else{
+                $stock = $existe['data'][0]['stock'] - $cantidad ;
+                if($stock < 0){
+                    $this->rt['error'] = 2;
+                    $this->rt['mensaje'] = "Error, el stock no puede quedar en negativo: (Stock actual ". $existe['data'][0]['stock'] .")";
+                }
+                else{
+                    $this->database->update($this->table,['stock' =>  $stock], ['id_material' => $idMaterial]);
+    
+                    if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+                    {
+                        $this->rt['error'] = $this->database->error()[1];
+                        $this->rt['mensaje'] = $this->database->error()[2];
+                    }
+                    else
+                    {
+                            $this->rt['error'] = 0;
+                            $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
+                    }
                 }
             }
         }
