@@ -103,7 +103,7 @@ class Smtp
                         ],
                         'TemplateID' => 913852,
                         'TemplateLanguage' => true,
-                        'Subject' => "Confirmacion de registro App Procefibras",
+                        'Subject' => "Reestrablecimiento de contraseña App Procefibras",
                         'Variables' => json_decode('{"url": "' . $url . '"}', true)
                     ]
                 ]
