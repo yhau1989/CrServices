@@ -53,6 +53,9 @@ class TUsuarios
             {
                 $this->rt['error'] = 0;
                 $this->rt['data'] = $data;   
+            } else {
+                $this->rt['error'] = 1;
+                $this->rt['mensaje'] = 'No existen usuarios';
             }
         }
         return $this->rt;
@@ -73,6 +76,9 @@ class TUsuarios
             {
                 $this->rt['error'] = 0;
                 $this->rt['data'] = $data;   
+            } else {
+                $this->rt['error'] = 1;
+                $this->rt['mensaje'] = 'Usuario no existe';
             }
         }
         return $this->rt;
@@ -81,7 +87,7 @@ class TUsuarios
     public function getUsuariosByEmail($email)
     {
         $this->setResult();
-        $data = $this->database->select($this->table,'*', ['email'=>$email]);
+        $data = $this->database->select($this->table,'*', ['email'=>$email],1);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -93,6 +99,11 @@ class TUsuarios
             {
                 $this->rt['error'] = 0;
                 $this->rt['data'] = $data;   
+            }
+            else
+            {
+                $this->rt['error'] = 1;
+                $this->rt['mensaje'] = 'Usuario no existe';  
             }
         }
         return $this->rt;
@@ -192,32 +203,28 @@ class TUsuarios
     public function InsertResetPassword($email)
     {
         $this->setResult();
-        $data = $this->database->insert('tokenpassword',[
-            'token' => md5($email.getdate()[0]), 
-            'email' => $email
-        ]);
+        $existe = $this->getUsuariosByEmail($email);
 
-        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+        if($existe['error'] == 0)
         {
-            $this->rt['error'] = $this->database->error()[1];
-            $this->rt['mensaje'] = $this->database->error()[2];
+            $token = md5($email . getdate()[0]);
+            $this->database->insert('tokenpassword', ['token' => $token, 'email' => $email]);
+
+            if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+                $this->rt['error'] = $this->database->error()[1];
+                $this->rt['mensaje'] = $this->database->error()[2];
+            } else {
+                $this->rt['error'] = 0;
+                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                $this->rt['data'] = $token;
+            }
         }
         else
         {
-                $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
-                $id = $this->database->id();
-                $datos = $this->getTokenResetPassword($id);
-                if($datos['error'] == 0)
-                {
-                    $this->rt['data'] = $datos['data'][0]['token'];
-                }
-                else
-                {
-                    $this->rt['data'] = $datos['mensaje'];
-                }
-            
+            $this->rt['error'] = 1;
+            $this->rt['mensaje'] = "Email no existe";
         }
+
         return $this->rt;
     }
 

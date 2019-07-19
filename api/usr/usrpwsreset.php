@@ -28,8 +28,8 @@ if($decode){
             $url = URL_RESET . $response["data"] ;
             $response["data"] =  $url;
             
-            /*$gt = new Smtp();
-            $gt->recuperarPassword($url, $decode->reset->email);*/
+            $gt = new Smtp();
+            $gt->recuperarPassword($url, $decode->reset->email);
         }  
     }    
 }

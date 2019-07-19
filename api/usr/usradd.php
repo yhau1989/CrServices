@@ -30,8 +30,8 @@ if($decode){
         {
             $url = URL_CONFIRMACION . $response["data"] . "/" . md5($decode->user->password);
             $response["data"] =  $url;
-            /*  $gt = new Smtp();
-            $gt->confirmarRegistro($decode->user->nombres, $url, $decode->user->email);*/
+            $gt = new Smtp();
+            $gt->confirmarRegistro($decode->user->nombres, $url, $decode->user->email);
         }        
     }    
 }
