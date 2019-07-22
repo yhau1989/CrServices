@@ -177,7 +177,7 @@ class TUsuarios
     public function login($email, $password)
     {
         $this->setResult();
-        $data = $this->database->select($this->table,'*', ['email'=>$email, 'password'=> MD5($password), 'estado' => 1, 'admin' => 0]);
+        $data = $this->database->select($this->table,'*', ['email'=>$email, 'password'=> MD5($password), 'estado' => 1, 'admin' => 0],1);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -189,6 +189,7 @@ class TUsuarios
             {
                 $this->rt['error'] = 0;
                 $this->rt['mensaje'] = 'ok';   
+                $this->rt['data'] = $data[0]['id'];   
             }
             else
             {
