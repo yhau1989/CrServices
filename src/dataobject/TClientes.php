@@ -24,7 +24,7 @@ class TClientes
             'port' => SQL_PORT
         ]);
 
-        setResult();
+        $this->setResult();
     }
 
     public function setResult(){
@@ -37,8 +37,8 @@ class TClientes
 
     public function getClientes()
     {
-        setResult();
-        $data = $this->database->select($this->table,'*');
+        $this->setResult();
+        $data = $this->database->select($this->table,'*', ['estado' => 1]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -57,8 +57,8 @@ class TClientes
 
     public function getClientesById($id)
     {
-        setResult();
-        $data = $this->database->select($this->table,'*', ['id'=>$id]);
+        $this->setResult();
+        $data = $this->database->select($this->table,'*', ['id'=>$id, 'estado' => 1]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -77,8 +77,8 @@ class TClientes
 
     public function getClientesByRuc($ruc)
     {
-        setResult();
-        $data = $this->database->select($this->table,'*', ['ruc'=>$ruc]);
+        $this->setResult();
+        $data = $this->database->select($this->table,'*', ['ruc'=>$ruc, 'estado'=>1]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -98,7 +98,7 @@ class TClientes
    
     public function insertCliente($ruc, $nombres, $apellidos, $direccion, $telefono)
     {
-        setResult();
+        $this->setResult();
         $this->database->insert($this->table,[
             'ruc' => $ruc, 
             'nombres' => $nombres, 
@@ -122,7 +122,7 @@ class TClientes
 
     public function updateCliente($id, $ruc, $nombres, $apellidos, $direccion, $telefono)
     {
-        setResult();
+        $this->setResult();
         $this->database->update($this->table,[
             'ruc' => $ruc, 
             'nombres' => $nombres, 

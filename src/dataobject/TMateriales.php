@@ -39,7 +39,7 @@ class TMateriales
     public function getMateriales()
     {
         $this->setResult();
-        $data = $this->database->select($this->table,'*');
+        $data = $this->database->select($this->table,'*', ['estado' => 1]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -59,7 +59,7 @@ class TMateriales
     public function getMaterialesById($id)
     {
         $this->setResult();
-        $data = $this->database->select($this->table,'*', ['id'=>$id]);
+        $data = $this->database->select($this->table,'*', ['id'=>$id, 'estado'=> 1]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];

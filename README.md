@@ -4,7 +4,7 @@ Recycling plant Services
 
 ## Methods
 
-### User
+### Usuarios
 
 #### Insertar usuario: http://localhost/CrServices/api/usr/usradd.php
 
@@ -180,6 +180,161 @@ Parametros de entrada:
     "mtr":{
         "id" : 8,
         "tipo": "carton2"
+    }
+}
+```
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": "Datos grabados con éxito..!!",
+    "data": null
+}
+```
+
+
+### Clientes
+
+
+#### List Clientes: http://localhost/CrServices/api/cli/clientlist.php
+
+No hay Parametros de entrada:
+
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": null,
+    "data": [
+        {
+            "id": "1",
+            "ruc": "0926327917002",
+            "nombres": "Emaulme",
+            "apellidos": "Tanhis",
+            "direccion": "Garzota 2 calle principa #2",
+            "telefono": "xxx"
+        }
+    ]
+}
+```
+
+
+#### Add Clientes: http://localhost/CrServices/api/cli/clientadd.php
+
+Parametros de entrada:
+```javascript
+{
+    "cliente":{
+        "ruc": "99999999999", 
+        "nombres": "Emaulme", 
+        "apellidos": "Tanhis", 
+        "direccion": "Garzota 2 calle principa #2", 
+        "telefono": "xxx"
+    }
+}
+```
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": "Datos grabados con éxito..!!",
+    "data": null
+}
+```
+
+
+#### Edit Clientes: http://localhost/CrServices/api/cli/clientedit.php
+
+Parametros de entrada:
+```javascript
+{
+    "cliente":{
+        "id":1,
+        "ruc": "0926327917002", 
+        "nombres": "Emaulme", 
+        "apellidos": "Tanhis", 
+        "direccion": "Garzota 2 calle principa #2", 
+        "telefono": "0959556489"
+    }
+}
+```
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": "Datos grabados con éxito..!!",
+    "data": null
+}
+```
+
+
+### Proveedores
+
+
+
+#### List Proveedores: http://localhost/CrServices/api/prov/proveelist.php
+
+No tiene Parametros de entrada:
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": null,
+    "data": [
+        {
+            "id": "1",
+            "ruc": "0926327917005",
+            "nombres": "Kiara",
+            "apellidos": "Reyna Torres",
+            "direccion": "Garzota 2 calle principa #2",
+            "telefono": "0959556489"
+        }
+    ]
+}
+```
+
+
+#### Add Proveedores: http://localhost/CrServices/api/prov/proveeadd.php
+
+Parametros de entrada:
+```javascript
+{
+    "proveedor":{
+        "ruc": "0926327917005", 
+        "nombres": "Kiara", 
+        "apellidos": "Reyna", 
+        "direccion": "Garzota 2 calle principa #2", 
+        "telefono": "0959556489"
+    }
+}
+```
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": "Datos grabados con éxito..!!",
+    "data": null
+}
+```
+
+#### Edit Proveedores: http://localhost/CrServices/api/prov/proveeedit.php
+
+Parametros de entrada:
+```javascript
+{
+    "proveedor":{
+        "id":1 ,
+        "ruc": "0926327917005", 
+        "nombres": "Kiara", 
+        "apellidos": "Reyna Torres", 
+        "direccion": "Garzota 2 calle principa #2", 
+        "telefono": "0959556489"
     }
 }
 ```
