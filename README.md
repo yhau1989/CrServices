@@ -150,3 +150,45 @@ Parametros de Salida:
 }
 
 ```
+
+#### Add Materiales: http://localhost/CrServices/api/mtr/mtradd.php
+
+Parametros de entrada:
+```javascript
+{
+    "mtr":{
+        "tipo": "tipo de material"
+    }
+}
+```
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": "Datos grabados con éxito..!!",
+    "data": null
+}
+```
+
+
+#### Edit Materiales: http://localhost/CrServices/api/mtr/mtredit.php
+
+Parametros de entrada:
+```javascript
+{
+    "mtr":{
+        "id" : 8,
+        "tipo": "carton2"
+    }
+}
+```
+
+Parametros de Salida:
+```javascript
+{
+    "error": 0,
+    "mensaje": "Datos grabados con éxito..!!",
+    "data": null
+}
+```
