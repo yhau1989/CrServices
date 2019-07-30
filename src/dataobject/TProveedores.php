@@ -38,7 +38,7 @@ class TProveedores
     public function getProveedores()
     {
         $this->setResult();
-        $data = $this->database->select($this->table,'*', ['estaso'=>1]);
+        $data = $this->database->select($this->table,'*', ['estado'=>1]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
