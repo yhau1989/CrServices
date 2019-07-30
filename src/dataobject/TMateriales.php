@@ -105,15 +105,12 @@ class TMateriales
             $this->rt['error'] = $this->database->error()[1];
             $this->rt['mensaje'] = $this->database->error()[2];
         }
-        else if($data->rowCount() > 0)
+        else
         {
             $this->rt['error'] = 0;
             $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
         }
-        else {
-            $this->rt['error'] = 1;
-            $this->rt['mensaje'] = "Id de material no existe";
-        }
+
         return $this->rt;
     }
 
