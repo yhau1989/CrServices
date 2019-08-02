@@ -2,7 +2,7 @@
 
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/glob.php");
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/vendor/autoload.php");
-include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/src/dataobject/TStock.php");
+include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/src/dataobject/TStocks.php");
 use Medoo\Medoo;
 
 
@@ -25,7 +25,7 @@ class TLotes
             'port' => SQL_PORT
         ]);
 
-        setResult();
+        $this->setResult();
     }
 
     public function setResult(){
@@ -38,7 +38,7 @@ class TLotes
 
     public function getLotes()
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -58,7 +58,7 @@ class TLotes
 
     public function getLotesById($id)
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*', ['id'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -78,7 +78,7 @@ class TLotes
 
     public function getLotesByPendingSeleccion()
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*', [
             'proceso_venta' => 1, 
             'proceso_selecciona'=> 0, 
@@ -103,7 +103,7 @@ class TLotes
 
     public function getLotesByPendingProcesar()
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*', [
             'proceso_venta' => 1, 
             'proceso_selecciona'=> 1, 
@@ -128,7 +128,7 @@ class TLotes
 
     public function getLotesByPendingAlmacenar()
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*', [
             'proceso_venta' => 1, 
             'proceso_selecciona'=> 1, 
@@ -156,7 +156,7 @@ class TLotes
 
     public function updateLoteSetProcessSeleccion($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
     {
-        setResult();
+        $this->setResult();
         $this->database->update($this->table,[
             'proceso_selecciona' => 1,
             'usuario_selecciona' => $usuarioProcess,
@@ -179,7 +179,7 @@ class TLotes
 
     public function updateLoteSetProcessProceso($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
     {
-        setResult();
+        $this->setResult();
         $this->database->update($this->table,[
             'proceso_procesar' => 1,
             'usuario_procesa' => $usuarioProcess,
@@ -203,7 +203,7 @@ class TLotes
 
     public function updateLoteSetProcessAlmacena($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
     {
-        setResult();
+        $this->setResult();
         $material = getLotesById($lote); //obtener el tipo de material
         $movimiento = array('error'=> -256,'mensaje' => null,'data' => null); 
 
@@ -250,9 +250,23 @@ class TLotes
 
 
 
-    public function insertLote($proceso_compra, $usuario_compra, $fecha_ini_compra, $fecha_fin_compra, $proceso_selecciona, $usuario_selecciona, $fecha_ini_selecciona, $fecha_fin_selecciona, $proceso_procesar, $usuario_procesa, $fecha_ini_procesa, $fecha_fin_procesa, $proceso_almacenar, $usuario_almacena, $fecha_ini_almacena, $fecha_fin_almacena, $material, $peso)
+    public function insertLote($material, $peso)
     {
+        $this->setResult();
+        $this->database->insert($this->table, [
+            'material' => $material,
+            'peso' => $peso
+        ]);
 
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+            $this->rt['error'] = 0;
+            $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+            $this->rt['data'] =   $this->database->id();
+        }
+        return $this->rt;
     }
 
 
