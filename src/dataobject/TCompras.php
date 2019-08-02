@@ -24,7 +24,7 @@ class TCompras
             'port' => SQL_PORT
         ]);
 
-        setResult();
+        $this->setResult();
     }
 
     public function setResult(){
@@ -37,7 +37,7 @@ class TCompras
 
     public function getCompras()
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*');
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -57,7 +57,7 @@ class TCompras
 
     public function getComprasById($id)
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*', ['id'=>$id]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -77,7 +77,7 @@ class TCompras
 
     public function getComprasByRuc($ruc)
     {
-        setResult();
+        $this->setResult();
         $data = $this->database->select($this->table,'*', ['ruc'=>$ruc]);
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -96,17 +96,18 @@ class TCompras
     }
 
    
-    public function insertCompra($cliente, $valor_total, $material, $peso, $vendedor, $fechaIniciaCompra, $fechaFinCompr)
+    public function insertCompra($proveedor, $valor_total, $material, $peso, $usuarioCompra)
     {
-        setResult();
-        $lote = insertPreLote($material, $peso, $vendedor, $fechaIniciaCompra, $fechaFinCompra);
+        $this->setResult();
+        $lote =  $this->insertPreLote($material, $peso);
 
         if($lote['error'] == 0)
         {
             $this->database->insert($this->table,[
-                'cliente' => $cliente, 
+                'proveedor' => $proveedor, 
                 'lote' => $lote['data'], 
-                'valor_total' => $valor_total
+                'valor_total' => $valor_total,
+                'usuario_compra' => $usuarioCompra
             ]);
     
             if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
@@ -129,31 +130,24 @@ class TCompras
 
     
 
-    public function insertPreLote($material, $peso, $vendedor, $fechaIniciaCompra, $fechaFinCompra)
+    public function insertPreLote($material, $peso)
     {
-        setResult();
-        $this->database->insert('lote',[
-            'proceso_venta' => 1, 
-            'usuario_venta' => $vendedor, 
-            'fecha_ini_compra' => $fechaIniciaCompra, 
-            'fecha_fin_compra' => $fechaFinCompra, 
+        $this->setResult();
+        $this->database->insert('lotes' ,[
             'material' => $material,
             'peso' => $peso
         ]);
 
-        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-        {
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
             $this->rt['error'] = $this->database->error()[1];
             $this->rt['mensaje'] = $this->database->error()[2];
-        }
-        else
-        {
+        } else {
             $this->rt['error'] = 0;
             $this->rt['mensaje'] = "Datos grabados con éxito..!!";
-            $this->rt['data'] = $database->id();
+            $this->rt['data'] =   $this->database->id();
         }
         return $this->rt;
-    }    
+    }
 
 
 
