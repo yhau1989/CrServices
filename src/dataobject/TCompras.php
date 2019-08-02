@@ -103,6 +103,7 @@ class TCompras
 
         if($lote['error'] == 0)
         {
+            $this->setResult();
             $this->database->insert($this->table,[
                 'proveedor' => $proveedor, 
                 'lote' => $lote['data'], 
