@@ -220,7 +220,7 @@ class TLotes
         
                 if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
                 {
-                    $movimiento = $stock->updateStocks($tipo_material['data']['material'], $material['data']['peso'], 'resta'); //RollBack
+                    $movimiento = $stock->updateStocks($material['data']['material'], $material['data']['peso'], 'resta'); //RollBack
                     $this->rt['error'] = $this->database->error()[1];
                     $this->rt['mensaje'] = $this->database->error()[2];
                 }
