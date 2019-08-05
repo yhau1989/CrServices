@@ -1,4 +1,5 @@
 <?php
+use GuzzleHttp\Psr7\Response;
 
 require_once "../../src/dataobject/Tlotes.php";
 
@@ -10,7 +11,6 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 $decode = json_decode(file_get_contents("php://input"));
 
-//ruc, nombres, apellidos, direccion, telefono
 
 if($decode){
     if (!(isset($decode) || isset($decode->lote) || isset($decode->lote->tipocambio) || isset($decode->lote->id) || isset($decode->lote->usuario) 
@@ -23,7 +23,7 @@ if($decode){
     }
     else
     {
-        $ft = new TLotes();
+        /*$ft = new TLotes();
         switch ($decode->lote->tipocambio) {
             case 's':
                 $response = $ft->updateLoteSetProcessSeleccion($decode->lote->id, $decode->lote->usuario, $decode->lote->fini, $decode->lote->ffin);     
@@ -34,7 +34,9 @@ if($decode){
             case 'a':
                 $response = $ft->updateLoteSetProcessAlmacena($decode->lote->id, $decode->lote->usuario, $decode->lote->fini, $decode->lote->ffin);
                 break;
-        }
+        }*/
+
+        $response = 'Hola';
     }    
 }
 else
