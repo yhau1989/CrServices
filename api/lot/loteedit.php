@@ -13,8 +13,8 @@ $decode = json_decode(file_get_contents("php://input"));
 //ruc, nombres, apellidos, direccion, telefono
 
 if($decode){
-    if (!(isset($decode) || isset($decode->cliente) || isset($decode->cliente->id) || isset($decode->cliente->ruc) || isset($decode->cliente->nombres) 
-    || isset($decode->cliente->apellidos) || isset($decode->cliente->direccion) || isset($decode->cliente->telefono)))
+    if (!(isset($decode) || isset($decode->lote) || isset($decode->cliente->tipocambio) || isset($decode->cliente->id) || isset($decode->cliente->usuario) 
+    || isset($decode->cliente->fini) || isset($decode->cliente->ffin)))
     {
        $response = array(
            'error' => 'error',
@@ -23,8 +23,18 @@ if($decode){
     }
     else
     {
-        $ft = new TClientes();
-        $response = $ft->updateCliente($decode->cliente->id,$decode->cliente->ruc, $decode->cliente->nombres, $decode->cliente->apellidos, $decode->cliente->direccion, $decode->cliente->telefono);     
+        $ft = new TLotes();
+        switch ($decode->cliente->tipocambio) {
+            case 's':
+                $response = $ft->updateLoteSetProcessSeleccion($decode->cliente->id, $decode->cliente->usuario, $decode->cliente->fini, $decode->cliente->ffin);     
+                break;
+            case 't':
+                $response = $ft->updateLoteSetProcessProceso($decode->cliente->id, $decode->cliente->usuario, $decode->cliente->fini, $decode->cliente->ffin);
+                break;
+            case 'a':
+                $response = $ft->updateLoteSetProcessAlmacena($decode->cliente->id, $decode->cliente->usuario, $decode->cliente->fini, $decode->cliente->ffin);
+                break;
+        }
     }    
 }
 else
