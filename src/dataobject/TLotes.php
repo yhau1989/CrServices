@@ -80,11 +80,11 @@ class TLotes
     {
         $this->setResult();
         $data = $this->database->select($this->table,'*', [
-            'proceso_venta' => 1, 
             'proceso_selecciona'=> 0, 
             'proceso_procesar' => 0, 
             'proceso_almacenar' => 0]
         );
+
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -105,7 +105,6 @@ class TLotes
     {
         $this->setResult();
         $data = $this->database->select($this->table,'*', [
-            'proceso_venta' => 1, 
             'proceso_selecciona'=> 1, 
             'proceso_procesar' => 0, 
             'proceso_almacenar' => 0]
@@ -130,7 +129,6 @@ class TLotes
     {
         $this->setResult();
         $data = $this->database->select($this->table,'*', [
-            'proceso_venta' => 1, 
             'proceso_selecciona'=> 1, 
             'proceso_procesar' => 1, 
             'proceso_almacenar' => 0]
@@ -162,7 +160,7 @@ class TLotes
             'usuario_selecciona' => $usuarioProcess,
             'fecha_ini_selecciona' => $fechaIniProcess,
             'fecha_fin_selecciona' => $fechaFinProcess
-        ], ['lote' => $id]);
+        ], ['lote' => $lote]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -185,7 +183,7 @@ class TLotes
             'usuario_procesa' => $usuarioProcess,
             'fecha_ini_procesa' => $fechaIniProcess,
             'fecha_fin_procesa' => $fechaFinProcess
-        ], ['lote' => $id]);
+        ], ['lote' => $lote]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -218,7 +216,7 @@ class TLotes
                     'usuario_almacena' => $usuarioProcess,
                     'fecha_ini_almacena' => $fechaIniProcess,
                     'fecha_fin_almacena' => $fechaFinProcess
-                ], ['lote' => $id]);
+                ], ['lote' => $lote]);
         
                 if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
                 {
