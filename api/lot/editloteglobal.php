@@ -17,8 +17,19 @@ if ($decode) {
             'mensaje' => 'Parametros de entrada incorrectos.'
         );
     } else {
-       
-        $response = 'Hola';
+
+        $ft = new TLotes();
+        switch ($decode->lote->tipocambio) {
+            case 's':
+                $response = $ft->updateLoteSetProcessSeleccion($decode->lote->id, $decode->lote->usuario, $decode->lote->fini, $decode->lote->ffin);
+                break;
+            case 't':
+                $response = $ft->updateLoteSetProcessProceso($decode->lote->id, $decode->lote->usuario, $decode->lote->fini, $decode->lote->ffin);
+                break;
+            case 'a':
+                $response = $ft->updateLoteSetProcessAlmacena($decode->lote->id, $decode->lote->usuario, $decode->lote->fini, $decode->lote->ffin);
+                break;
+        }
     }
 } else {
     $response = array(
