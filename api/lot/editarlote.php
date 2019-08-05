@@ -1,6 +1,4 @@
 <?php
-use GuzzleHttp\Psr7\Response;
-
 require_once "../../src/dataobject/Tlotes.php";
 
 header("Access-Control-Allow-Origin: *");
@@ -23,7 +21,7 @@ if($decode){
     }
     else
     {
-        /*$ft = new TLotes();
+        $ft = new TLotes();
         switch ($decode->lote->tipocambio) {
             case 's':
                 $response = $ft->updateLoteSetProcessSeleccion($decode->lote->id, $decode->lote->usuario, $decode->lote->fini, $decode->lote->ffin);     
@@ -34,9 +32,7 @@ if($decode){
             case 'a':
                 $response = $ft->updateLoteSetProcessAlmacena($decode->lote->id, $decode->lote->usuario, $decode->lote->fini, $decode->lote->ffin);
                 break;
-        }*/
-
-        $response = 'Hola';
+        }
     }    
 }
 else
