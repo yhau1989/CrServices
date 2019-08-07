@@ -2,6 +2,7 @@
 
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/glob.php");
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/vendor/autoload.php");
+include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/src/dataobject/TStocks.php");
 use Medoo\Medoo;
 
 
@@ -89,8 +90,13 @@ class TMateriales
         }
         else
         {
-            $this->rt['error'] = 0;
-            $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+
+
+            $stock = new TStocks();
+            $this->rt = $stock->insertStock($this->database->id());
+
+            //$this->rt['error'] = 0;
+            //$this->rt['mensaje'] = "Datos grabados con éxito..!!";
         }
         return $this->rt;
     }
