@@ -232,6 +232,7 @@ class TLotes
             }
             else
             {
+                $movimiento["data"] = $material['data'];
                 $this->rt = $movimiento;
             }
         }
