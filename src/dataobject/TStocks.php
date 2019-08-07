@@ -103,9 +103,6 @@ class TStocks
         $this->setResult();
         $existe = $this->getStocksById($idMaterial);
 
-
-        
-
         if($existe['error'] == 0 && count($existe['data']) > 0)
         {
             if($operacion === 'suma'){
@@ -149,7 +146,7 @@ class TStocks
         else
         {
             $this->rt['error'] = 2;
-            $this->rt['mensaje'] = "No existe tipo de material para actualizar el stock";
+            $this->rt['mensaje'] = "No existe tipo de material(".$idMaterial.") para actualizar el stock";
         }
         
         return $this->rt;
