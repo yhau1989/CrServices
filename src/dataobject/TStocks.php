@@ -38,7 +38,10 @@ class TStocks
     public function getStocks()
     {
         $this->setResult();
-        $data = $this->database->select($this->table,'*');
+        $data = $this->database->select($this->table, 
+        ['[><]tipomateriales' => ['stockmateriales.id_material' => 'id']],
+        ['stockmateriales.id_material', 'tipomateriales.tipo', 'stockmateriales.stock']);
+
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
