@@ -232,7 +232,7 @@ class TLotes
             }
             else
             {
-                $movimiento["data"] = $material['data'];
+                $movimiento["data"] = $material['data']["material"];
                 $this->rt = $movimiento;
             }
         }
