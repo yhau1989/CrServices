@@ -207,7 +207,7 @@ class TLotes
 
         if($material['error'] == 0 &&  count($material['data']) > 0){
             $stock = new TStocks();
-            $movimiento = $stock->updateStocks($material['data']['material'], $material['data']['peso'], 'suma'); //movimiento de stock
+            $movimiento = $stock->updateStocks($material['data'][0]['material'], $material['data'][0]['peso'], 'suma'); //movimiento de stock
 
             if($movimiento['error'] == 0)
             {
@@ -220,7 +220,7 @@ class TLotes
         
                 if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
                 {
-                    $movimiento = $stock->updateStocks($material['data']['material'], $material['data']['peso'], 'resta'); //RollBack
+                    $movimiento = $stock->updateStocks($material['data'][0]['material'], $material['data'][0]['peso'], 'resta'); //RollBack
                     $this->rt['error'] = $this->database->error()[1];
                     $this->rt['mensaje'] = $this->database->error()[2];
                 }
@@ -232,7 +232,6 @@ class TLotes
             }
             else
             {
-                $movimiento["data"] = $material['data'][0]["material"];
                 $this->rt = $movimiento;
             }
         }
