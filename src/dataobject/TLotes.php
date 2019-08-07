@@ -202,7 +202,7 @@ class TLotes
     public function updateLoteSetProcessAlmacena($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
     {
         $this->setResult();
-        $material = getLotesById($lote); //obtener el tipo de material
+        $material = $this->getLotesById($lote); //obtener el tipo de material
         $movimiento = array('error'=> -256,'mensaje' => null,'data' => null); 
 
         if($material['error'] == 0 &&  count($material['data']) > 0){
