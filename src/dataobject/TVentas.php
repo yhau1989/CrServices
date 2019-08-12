@@ -42,7 +42,15 @@ class TVentas
     public function getVentas()
     {
         $this->setResult();
-        $data = $this->database->select($this->table,'*');
+        $data = $this->database->select(
+            $this->table,
+            ['[><]usuario' => ['ventas.usuario_vendedor' => 'id'],'[><]cliente' => ['ventas.cliente' => 'id']],
+            ['ventas.id', 'usuario.nombres(nombre_vendedor)', 'usuario.apellidos(apellidos_vendedor)','cliente.ruc(ruc_cliente)', 'cliente.nombres(nombre_cliente)',
+            'cliente.apellidos(apellido_cliente)', 'ventas.valor_total','ventas.fecha_venta' ]
+    
+    
+        );
+
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -100,46 +108,81 @@ class TVentas
     }
 
    
-    public function insertVenta($usuario_vendedor, $tipo_material, $peso, $valor, $fecha_venta)
+    public function insertVenta($usuario_vendedor, $cliente, $valorTotal, $detalle)
     {
         $this->setResult();
-       $stock = new TStocks();
-       $movimiento = $stock->updateStocks($tipo_material, $peso, 'resta'); //movimiento de stock
+        $this->database->insert($this->table,[
+            'usuario_vendedor' => $usuario_vendedor, 
+            'cliente' => $cliente, 
+            'valor_total' => $valorTotal,
+        ]);
 
-       if($movimiento['error'] == 0)
-       {
-            if($lote['error'] == 0)
+        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+        {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        }
+        else
+        {
+            $idVenta = $this->database->id();
+            $error = 0;
+            foreach ($detalle as $item => $value) {
+                $det = $this->insertVentaDetalle($idVenta, $value->material, $value->descripcion, $value->peso, $value->valor, $value->iva, $value->valortotal);
+
+                if($det['error'] != 0)
+                {
+                    $error = 1;
+                    $this->rt = $det;
+                    break;
+                }
+            }
+
+            if($error == 0)
             {
-                $this->database->insert($this->table,[
-                    'usuario_vendedor' => $usuario_vendedor, 
-                    'tipo_material' => $tipo_material, 
-                    'peso' => $peso, 
-                    'valor' => $valor, 
-                    'fecha_venta' => $fecha_venta
-                ]);
-        
-                if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-                {
-                    $movimiento = $stock->updateStocks($tipo_material, $peso, 'suma'); //RollBack
-                    $this->rt['error'] = $this->database->error()[1];
-                    $this->rt['mensaje'] = $this->database->error()[2];
-                }
-                else
-                {
-                    $this->rt['error'] = 0;
-                    $this->rt['mensaje'] = "Datos grabados con éxito..!!";
-                }
+                $this->rt['error'] = 0;
+                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                $this->rt['data'] = "código de venta: #" . sprintf("%09d", $idVenta);
+
+            }
+        }
+            
+        return $this->rt;
+    }
+
+
+
+
+    public function insertVentaDetalle($idventa, $idMaterial, $descripcion, $peso, $valor, $iva, $valorTotal)
+    {
+        $this->setResult();
+        $stock = new TStocks();
+        $this->database->insert('ventadetalle', [
+            'id_venta' => $idventa,
+            'id_material' => $idMaterial,
+            'descripcion' => $descripcion,
+            'peso' => $peso,
+            'valor' => $valor,
+            'iva' => $iva,
+            'valor_total' => $valorTotal
+        ]);
+
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+            
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+            $movimiento = $stock->updateStocks($idMaterial, $peso, 'resta'); //RollBack
+            if($movimiento['error'] == 0)
+            {
+                $this->rt = $movimiento;
             }
             else
             {
-                $this->rt = $lote;
+                $this->rt['error'] = $movimiento['error'];
+                $this->rt['mensaje'] = $movimiento['mensaje'];
             }
-       }
-       else
-       {
-            $this->rt = $movimiento;
-       }
-
+        }
+           
         return $this->rt;
     }
 

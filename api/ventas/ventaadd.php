@@ -12,9 +12,8 @@ $decode = json_decode(file_get_contents("php://input"));
 
 
 if($decode){
-    if(!(isset($decode) || isset($decode->venta) || isset($decode->venta->iduservendedor) 
-        || isset($decode->venta->idmaterial) || isset($decode->venta->peso) || isset($decode->venta->valor) 
-        || isset($decode->venta->fecha_venta)))
+    if(!(isset($decode) || isset($decode->venta) || isset($decode->venta->vendedor) 
+        || isset($decode->venta->cliente) || isset($decode->venta->valortotal) || isset($decode->venta->detalle)))
     {
        $response = array(
            'error' => 'error',
@@ -25,8 +24,7 @@ if($decode){
     {
         $ft = new TVentas();
         //$usuario_vendedor, $tipo_material, $peso, $valor, $fecha_venta
-        $response = $ft->insertVenta($decode->venta->iduservendedor, $decode->venta->idmaterial, 
-                                     $decode->venta->peso, $decode->venta->valor, $decode->venta->fecha_venta);     
+        $response = $ft->insertVenta($decode->venta->vendedor, $decode->venta->cliente, $decode->venta->valortotal, $decode->venta->detalle);    
     }    
 }
 else
