@@ -126,12 +126,15 @@ class TVentas
         {
             $idVenta = $this->database->id();
             $error = 0;
+            $limite = 0;
             foreach ($detalle as $item => $value) {
+                $limite++;
                 $det = $this->insertVentaDetalle($idVenta, $value->material, $value->descripcion, $value->peso, $value->valor, $value->iva, $value->valortotal);
-
                 if($det['error'] != 0)
                 {
                     $error = 1;
+                    $this->deleteVentas($idVenta);
+                    $this->rollbackStockVentas($detalle, $limite);
                     $this->rt = $det;
                     break;
                 }
@@ -148,7 +151,6 @@ class TVentas
             
         return $this->rt;
     }
-
 
 
 
@@ -183,6 +185,53 @@ class TVentas
             }
         }
            
+        return $this->rt;
+    }
+
+
+    public function deleteVentas($idVenta)
+    {
+        $this->setResult();
+        $this->database->delete($this->table, ['AND' => ['id' => $idVenta]]);
+
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+        
+                $this->rt['error'] = 0;
+                $this->rt['mensaje'] = 'Venta eliminada correctamente...!!';
+        }
+
+        return $this->rt;
+    }
+
+
+    public function rollbackStockVentas($items, $limite)
+    {
+        $limit = 0;
+        $this->setResult();
+        foreach ($items as $item => $value) {
+            $limit++;
+            if($limit < $limite)
+            {
+                $stock = new TStocks();
+                $movimiento = $stock->updateStocks($value->material, $value->peso, 'suma'); //RollBack
+                if ($movimiento['error'] == 0) {
+                    $this->rt = $movimiento;
+                } else {
+                    $this->rt['error'] = 0;
+                    $this->rt['mensaje'] = "ok";
+                    $this->rt['data'] = null;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+
         return $this->rt;
     }
 
