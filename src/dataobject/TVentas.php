@@ -129,7 +129,7 @@ class TVentas
             $limite = 0;
             foreach ($detalle as $item => $value) {
                 $limite++;
-                $det = $this->insertVentaDetalle($idVenta, $value->material, $value->descripcion, $value->peso, $value->valor, $value->iva, $value->valortotal);
+                $det = $this->insertVentaDetalle($idVenta, $value->idmaterial, $value->descripcion, $value->peso, $value->precio, $value->iva, $value->valortotal);
                 if($det['error'] != 0)
                 {
                     $error = 1;
