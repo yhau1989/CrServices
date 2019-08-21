@@ -128,7 +128,7 @@ class TStocks
                 $stock = $existe['data'][0]['stock'] - $cantidad ;
                 if($stock < 0){
                     $this->rt['error'] = 2;
-                    $this->rt['mensaje'] = "Error, el stock no puede quedar en negativo: (Stock actual ". $existe['data'][0]['stock'] .")";
+                    $this->rt['mensaje'] = "Error, el stock no puede quedar en negativo: (Id Material: " . $idMaterial ." - Stock actual: ". $existe['data'][0]['stock'] .")" ;
                 }
                 else{
                     $this->database->update($this->table,['stock' =>  $stock], ['id_material' => $idMaterial]);
