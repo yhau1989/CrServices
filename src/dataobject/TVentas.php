@@ -67,6 +67,58 @@ class TVentas
         return $this->rt;
     }
 
+
+    public function subtotales($detalle)
+    {
+        $iteValue = 0;
+
+        foreach ($detalle as $item => $value) {
+            $iteValue = $iteValue + $value['valor'];
+        }
+
+        $subtotales = array(
+            'subtotal'=>  number_format((float)($iteValue), 2, '.', ''),
+            'iva' => number_format((float)($iteValue * 0.12), 2, '.', ''),
+            'neto' => number_format((float)($iteValue * 1.12), 2, '.', '')
+        );
+
+        return $subtotales;
+
+    }
+
+    public function getVentaDetalle($idVenta)
+    {
+        $this->setResult();
+        $data = $this->database->select('ventadetalle','*', ['id_venta'=>$idVenta]);
+        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+        {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+
+        }
+        else
+        {
+            if($data && count($data) > 0)
+            {
+
+                $this->rt = array(
+                    'error'=> 0,
+                    'mensaje' => 'ok',
+                    'data' => $data,
+                    'subtotal' => $this->subtotales($data)
+                );
+            }
+            else
+            {
+                $this->rt['error'] = 1;
+                $this->rt['mensaje'] = 'No existen detalles de esta venta.';
+            }
+        }
+        return $this->rt;
+    }
+
+
+
     public function getVentasByVendedor($vendedor)
     {
         $this->setResult();
@@ -106,6 +158,10 @@ class TVentas
         }
         return $this->rt;
     }
+
+
+
+
 
    
     public function insertVenta($usuario_vendedor, $cliente, $valorTotal, $detalle)

@@ -11,9 +11,6 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $ft = new TVentas();
 $response = $ft->getVentas();    
 
-$response = 
-
-
         
 
 
