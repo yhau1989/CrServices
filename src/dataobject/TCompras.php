@@ -55,6 +55,30 @@ class TCompras
         return $this->rt;
     }
 
+    public function getComprasList()
+    {
+        $this->setResult();
+        $data = $this->database->select($this->table, [
+               "[><]usuario" => ["compras.usuario_compra" => "id"],
+               "[><]proveedor" => ["compras.proveedor" => "id"]
+        ],
+        ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.lote', 'compras.fecha_compra',
+        'usuario.nombres(usr_nombre)', 'usuario.apellidos(usr_apellido)']
+    
+            );
+
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+            if ($data && count($data) > 0) {
+                $this->rt['error'] = 0;
+                $this->rt['data'] = $data;
+            }
+        }
+        return $this->rt;
+    }
+
     public function getComprasById($id)
     {
         $this->setResult();
