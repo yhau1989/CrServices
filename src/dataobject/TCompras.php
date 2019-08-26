@@ -55,17 +55,53 @@ class TCompras
         return $this->rt;
     }
 
-    public function getComprasList()
+    public function getComprasList($fini=null, $ffin=null)
     {
         $this->setResult();
-        $data = $this->database->select($this->table, [
-               "[><]usuario" => ["compras.usuario_compra" => "id"],
-               "[><]proveedor" => ["compras.proveedor" => "id"]
-        ],
-        ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.lote', 'compras.fecha_compra',
-        'usuario.nombres(usr_nombre)', 'usuario.apellidos(usr_apellido)']
-    
+        $data = null;
+        
+        if((isset($fini) && isset($ffin)) && strlen($fini) > 0 && strlen($ffin) > 0 )
+        {
+            $data = $this->database->select($this->table, [
+                "[><]usuario" => ["compras.usuario_compra" => "id"],
+                "[><]proveedor" => ["compras.proveedor" => "id"]
+            ],
+            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.lote', 'compras.fecha_compra',
+            'usuario.nombres(usr_nombre)', 'usuario.apellidos(usr_apellido)'],
+            ['compras.fecha_compra[<>]' => [$fini,$ffin]]
             );
+        }
+        else if (isset($fini) && isset($ffin) && strlen($fini) > 0 && strlen($ffin) == 0)
+        {
+            $data = $this->database->select($this->table, [
+                "[><]usuario" => ["compras.usuario_compra" => "id"],
+                "[><]proveedor" => ["compras.proveedor" => "id"]
+            ],
+            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.lote', 'compras.fecha_compra',
+            'usuario.nombres(usr_nombre)', 'usuario.apellidos(usr_apellido)'],
+            ['compras.fecha_compra[>=]' => $fini]
+            );
+        }
+        else if (isset($fini) && isset($ffin) && strlen($fini) == 0 && strlen($ffin) > 0)
+        {
+            $data = $this->database->select($this->table, [
+                "[><]usuario" => ["compras.usuario_compra" => "id"],
+                "[><]proveedor" => ["compras.proveedor" => "id"]
+            ],
+            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.lote', 'compras.fecha_compra',
+            'usuario.nombres(usr_nombre)', 'usuario.apellidos(usr_apellido)'],
+            ['compras.fecha_compra[<=]' => $ffin]
+            );
+        }
+        else
+        {
+            $data = $this->database->select($this->table, [
+                "[><]usuario" => ["compras.usuario_compra" => "id"],
+                "[><]proveedor" => ["compras.proveedor" => "id"]
+            ],
+            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.lote', 'compras.fecha_compra',
+            'usuario.nombres(usr_nombre)', 'usuario.apellidos(usr_apellido)']);
+        }
 
         if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
             $this->rt['error'] = $this->database->error()[1];

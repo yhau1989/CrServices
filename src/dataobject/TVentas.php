@@ -39,17 +39,49 @@ class TVentas
         );
     }
 
-    public function getVentas()
+    public function getVentas($fini=null, $ffin=null)
     {
         $this->setResult();
-        $data = $this->database->select(
-            $this->table,
-            ['[><]usuario' => ['ventas.usuario_vendedor' => 'id'],'[><]cliente' => ['ventas.cliente' => 'id']],
-            ['ventas.id', 'usuario.nombres(nombre_vendedor)', 'usuario.apellidos(apellidos_vendedor)','cliente.ruc(ruc_cliente)', 'cliente.nombres(nombre_cliente)',
-            'cliente.apellidos(apellido_cliente)', 'ventas.valor_total','ventas.fecha_venta' ]
-    
-    
-        );
+        $data = null;
+        if((isset($fini) && isset($ffin)) && strlen($fini) > 0 && strlen($ffin) > 0 )
+        {
+            $data = $this->database->select(
+                $this->table,
+                ['[><]usuario' => ['ventas.usuario_vendedor' => 'id'],'[><]cliente' => ['ventas.cliente' => 'id']],
+                ['ventas.id', 'usuario.nombres(nombre_vendedor)', 'usuario.apellidos(apellidos_vendedor)','cliente.ruc(ruc_cliente)', 'cliente.nombres(nombre_cliente)',
+                'cliente.apellidos(apellido_cliente)', 'ventas.valor_total','ventas.fecha_venta' ],
+                ['ventas.fecha_venta[<>]' => [$fini, $ffin]]
+            );
+        }
+        else if (isset($fini) && isset($ffin) && strlen($fini) > 0 && strlen($ffin) == 0)
+        {
+            $data = $this->database->select(
+                $this->table,
+                ['[><]usuario' => ['ventas.usuario_vendedor' => 'id'],'[><]cliente' => ['ventas.cliente' => 'id']],
+                ['ventas.id', 'usuario.nombres(nombre_vendedor)', 'usuario.apellidos(apellidos_vendedor)','cliente.ruc(ruc_cliente)', 'cliente.nombres(nombre_cliente)',
+                'cliente.apellidos(apellido_cliente)', 'ventas.valor_total','ventas.fecha_venta' ],
+                ['ventas.fecha_venta[>=]' => $fini]
+            );
+        }
+        else if (isset($fini) && isset($ffin) && strlen($fini) == 0 && strlen($ffin) > 0)
+        {
+            $data = $this->database->select(
+                $this->table,
+                ['[><]usuario' => ['ventas.usuario_vendedor' => 'id'],'[><]cliente' => ['ventas.cliente' => 'id']],
+                ['ventas.id', 'usuario.nombres(nombre_vendedor)', 'usuario.apellidos(apellidos_vendedor)','cliente.ruc(ruc_cliente)', 'cliente.nombres(nombre_cliente)',
+                'cliente.apellidos(apellido_cliente)', 'ventas.valor_total','ventas.fecha_venta' ],
+                ['ventas.fecha_venta[<=]' => $ffin]
+            );
+        }
+        else
+        {
+            $data = $this->database->select(
+                $this->table,
+                ['[><]usuario' => ['ventas.usuario_vendedor' => 'id'],'[><]cliente' => ['ventas.cliente' => 'id']],
+                ['ventas.id', 'usuario.nombres(nombre_vendedor)', 'usuario.apellidos(apellidos_vendedor)','cliente.ruc(ruc_cliente)', 'cliente.nombres(nombre_cliente)',
+                'cliente.apellidos(apellido_cliente)', 'ventas.valor_total','ventas.fecha_venta' ]
+            );
+        }
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {

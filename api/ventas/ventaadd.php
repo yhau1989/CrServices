@@ -10,7 +10,6 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 $decode = json_decode(file_get_contents("php://input"));
 
-
 if($decode){
     if(!(isset($decode) || isset($decode->venta) || isset($decode->venta->vendedor) 
         || isset($decode->venta->cliente) || isset($decode->venta->valortotal) || isset($decode->venta->detalle)))

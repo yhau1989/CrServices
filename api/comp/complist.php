@@ -8,12 +8,29 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-$ft = new Tcompras();
-$response = $ft->getComprasList();
+$decode = json_decode(file_get_contents("php://input"));
 
+if($decode){
+    if((isset($decode) && isset($decode->compra) && isset($decode->compra->fecini) && isset($decode->compra->fecfin)))
+    {
+        $ft = new Tcompras();
+        $response = $ft->getComprasList($decode->compra->fecini, $decode->compra->fecfin); 
+    }
+    else
+    {
+        $response = array(
+            'error' => 'error',
+            'mensaje' => 'Parametros de entrada incorrectos.'
+        );
+    }    
+}
+else
+{
+    $ft = new Tcompras();
+    $response = $ft->getComprasList();
+}
 
 $encode = json_encode($response);
-
 exit( $encode );
 
 
