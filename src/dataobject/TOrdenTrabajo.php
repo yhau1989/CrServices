@@ -6,11 +6,11 @@ include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/src/dataobject/TStocks.php");
 use Medoo\Medoo;
 
 
-class TLotes
+class TOrdenTrabajo
 {
     private $rt;
     private $database;
-    private $table = 'lotes';
+    private $table = 'ordentrabajo';
     public function __construct(){
         $this->database = new Medoo([
             // required
@@ -36,54 +36,46 @@ class TLotes
         );
     }
 
-    public function getLotes()
+    public function getODTs()
+    {
+        $this->setResult();
+        $data = $this->database->select('ordentrabajo(odt)',
+        [
+            '[><]tipomateriales(mat)' => ['odt.tipo_material' => 'id'],
+            '[>]usuario(usr)' => ['odt.usuario_selecciona' => 'id'],
+            '[>]usuario(usrt)' => ['odt.usuario_tritura' => 'id'],
+            '[>]usuario(usra)' => ['odt.usuario_almacena' => 'id'],
+        ],
+        [
+            'odt.orden_id', 'mat.tipo(tipo_material)', 'odt.peso_total'
+            ,'user_selecciona' => Medoo::raw("CONCAT(usr.nombres,' ', usr.apellidos)"),'odt.fecha_ini_selecciona', 'odt.fecha_fin_selecciona'
+            ,'odt.proceso_trituracion', 'user_tritura' => Medoo::raw("CONCAT(usrt.nombres,' ', usrt.apellidos)"), 'odt.fecha_ini_tritura', 'odt.fecha_fin_tritura'
+            ,'odt.proceso_almacena', 'user_almacena' => Medoo::raw("CONCAT(usra.nombres,' ', usra.apellidos)"), 'odt.fecha_ini_almacena', 'odt.fecha_fin_almacena'
+        ]);
+        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+        {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        }
+        else
+        {
+            if($data && count($data) > 0)
+            {
+                $this->rt['error'] = 0;
+                $this->rt['data'] = $data;   
+            }
+        }
+        return $this->rt;
+    }
+
+    public function getODTReportes()
     {
         $this->setResult();
         $data = $this->database->select($this->table,'*');
-        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-        {
-            $this->rt['error'] = $this->database->error()[1];
-            $this->rt['mensaje'] = $this->database->error()[2];
-        }
-        else
-        {
-            if($data && count($data) > 0)
-            {
-                $this->rt['error'] = 0;
-                $this->rt['data'] = $data;   
-            }
-        }
-        return $this->rt;
-    }
 
-    public function getLotesByMaterial($material)
-    {
-        $this->setResult();
-        $data = $this->database->select($this->table,'*',['material' => $material]);
 
-        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-        {
-            $this->rt['error'] = $this->database->error()[1];
-            $this->rt['mensaje'] = $this->database->error()[2];
-        }
-        else
-        {
-            if($data && count($data) > 0)
-            {
-                $this->rt['error'] = 0;
-                $this->rt['data'] = $data;   
-            }else{
-                $this->rt['error'] = 1;
-                $this->rt['mensaje'] = 'No esxisten lotes para este tipo de material';
-            }
-        }
-        return $this->rt;
-    }
 
-    public function getLotesById($id)
-    {
-        $this->setResult();
-        $data = $this->database->select($this->table,'*', ['lote'=>$id]);
+
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -272,27 +264,71 @@ class TLotes
 
 
 
-    public function insertLote($material, $peso)
+    public function insertODT($material, $peso, $usuarioSelecciona, $fecIniSeleccion, $fecFinSeleccion, $lotes)
     {
         $this->setResult();
         $this->database->insert($this->table, [
-            'material' => $material,
-            'peso' => $peso
+            'tipo_material' => $material,
+            'peso_total' => $peso,
+            'usuario_selecciona' => $usuarioSelecciona,
+            'fecha_ini_selecciona' => $fecIniSeleccion,
+            'fecha_fin_selecciona' => $fecFinSeleccion,
         ]);
 
         if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
             $this->rt['error'] = $this->database->error()[1];
             $this->rt['mensaje'] = $this->database->error()[2];
         } else {
-            $this->rt['error'] = 0;
-            $this->rt['mensaje'] = "Datos grabados con éxito..!!";
-            $this->rt['data'] =   $this->database->id();
+
+            $idOdt = $this->database->id();
+            $resukl = $this->insertODTLotes($idOdt,$lotes);
+            if($resukl ['error'] == 0)
+            {
+                $this->rt['error'] = 0;
+                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                $this->rt['data'] =  $idOdt;
+            }
+            else
+            {
+                $this->database->delete($this->table,  ["AND" => ["orden_id" => $idOdt]]);
+                $this->rt = $resukl;
+            }
         }
         return $this->rt;
     }
 
 
+    public function insertODTLotes($idOtd, $lotes)
+    {
+        $items = null; 
+        foreach($lotes as $clave => $valor)
+        {
+            $items[$clave] = array('id_orden_trabajo'=> $idOtd,'id_lote' => $valor,);
+        }
 
+        $this->setResult();
+        if(count($items) > 0)
+        {
+
+            $this->database->insert('ordentrabajolotes', $items);
+            if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+                $this->rt['error'] = $this->database->error()[1];
+                $this->rt['mensaje'] = $this->database->error()[2];
+            } else {
+
+                $this->rt['error'] = 0;
+                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                $this->rt['data'] =   null;
+            }
+        }
+        else{
+                $this->rt['error'] = 1;
+                $this->rt['mensaje'] = "No se han encontrado lotes para esta ODT";
+                $this->rt['data'] =   null;
+        }
+        return $this->rt;
+
+    }
 
 
 
