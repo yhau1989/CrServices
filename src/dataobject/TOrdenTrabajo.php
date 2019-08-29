@@ -74,8 +74,6 @@ class TOrdenTrabajo
         $data = $this->database->select($this->table,'*');
 
 
-
-
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
             $this->rt['error'] = $this->database->error()[1];
@@ -96,21 +94,34 @@ class TOrdenTrabajo
     public function getODTByPendingTriturar()
     {
         $this->setResult();
-        $data = $this->database->select($this->table,'*', [
-            'proceso_trituracion' => 0,
-            'proceso_almacena' => 0]
+        $data = $this->database->select(
+            'ordentrabajo(odt)',
+            [
+                '[><]tipomateriales(mat)' => ['odt.tipo_material' => 'id'],
+                '[>]usuario(usr)' => ['odt.usuario_selecciona' => 'id'],
+                '[>]usuario(usrt)' => ['odt.usuario_tritura' => 'id'],
+                '[>]usuario(usra)' => ['odt.usuario_almacena' => 'id'],
+            ],
+            [
+                'odt.orden_id', 'mat.tipo(tipo_material)', 'odt.peso_total', 
+                'user_selecciona' => Medoo::raw("CONCAT(usr.nombres,' ', usr.apellidos)"), 
+                'odt.fecha_ini_selecciona', 'odt.fecha_fin_selecciona', 'odt.proceso_trituracion', 
+                'user_tritura' => Medoo::raw("CONCAT(usrt.nombres,' ', usrt.apellidos)"), 
+                'odt.fecha_ini_tritura', 'odt.fecha_fin_tritura', 'odt.proceso_almacena', 
+                'user_almacena' => Medoo::raw("CONCAT(usra.nombres,' ', usra.apellidos)"), 'odt.fecha_ini_almacena', 'odt.fecha_fin_almacena'
+            ],
+            ['AND' => [
+                'odt.proceso_trituracion' => 0,
+                'odt.proceso_almacena' => 0
+            ]]
         );
-        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-        {
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
             $this->rt['error'] = $this->database->error()[1];
             $this->rt['mensaje'] = $this->database->error()[2];
-        }
-        else
-        {
-            if($data && count($data) > 0)
-            {
+        } else {
+            if ($data && count($data) > 0) {
                 $this->rt['error'] = 0;
-                $this->rt['data'] = $data;   
+                $this->rt['data'] = $data;
             }
         }
         return $this->rt;
@@ -119,62 +130,49 @@ class TOrdenTrabajo
     public function getODTByPendingAlmacenar()
     {
         $this->setResult();
-        $data = $this->database->select($this->table,'*', [
-                'proceso_trituracion' => 1,
-                'proceso_almacena' => 0
-            ]
+        $data = $this->database->select(
+            'ordentrabajo(odt)',
+            [
+                '[><]tipomateriales(mat)' => ['odt.tipo_material' => 'id'],
+                '[>]usuario(usr)' => ['odt.usuario_selecciona' => 'id'],
+                '[>]usuario(usrt)' => ['odt.usuario_tritura' => 'id'],
+                '[>]usuario(usra)' => ['odt.usuario_almacena' => 'id'],
+            ],
+            [
+                'odt.orden_id', 'mat.tipo(tipo_material)', 'odt.peso_total',
+                'user_selecciona' => Medoo::raw("CONCAT(usr.nombres,' ', usr.apellidos)"),
+                'odt.fecha_ini_selecciona', 'odt.fecha_fin_selecciona', 'odt.proceso_trituracion',
+                'user_tritura' => Medoo::raw("CONCAT(usrt.nombres,' ', usrt.apellidos)"),
+                'odt.fecha_ini_tritura', 'odt.fecha_fin_tritura', 'odt.proceso_almacena',
+                'user_almacena' => Medoo::raw("CONCAT(usra.nombres,' ', usra.apellidos)"), 'odt.fecha_ini_almacena', 'odt.fecha_fin_almacena'
+            ],
+            ['AND' => [
+                'odt.proceso_trituracion' => 1,
+                'odt.proceso_almacena' => 0
+            ]]
         );
-        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-        {
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
             $this->rt['error'] = $this->database->error()[1];
             $this->rt['mensaje'] = $this->database->error()[2];
-        }
-        else
-        {
-            if($data && count($data) > 0)
-            {
+        } else {
+            if ($data && count($data) > 0) {
                 $this->rt['error'] = 0;
-                $this->rt['data'] = $data;   
+                $this->rt['data'] = $data;
             }
         }
         return $this->rt;
     }
 
 
-
-
-    public function updateLoteSetProcessSeleccion($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
+    public function updateOdtTrituracion($idOdt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
     {
         $this->setResult();
         $this->database->update($this->table,[
-            'proceso_selecciona' => 1,
-            'usuario_selecciona' => $usuarioProcess,
-            'fecha_ini_selecciona' => $fechaIniProcess,
-            'fecha_fin_selecciona' => $fechaFinProcess
-        ], ['lote' => $lote]);
-
-        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-        {
-            $this->rt['error'] = $this->database->error()[1];
-            $this->rt['mensaje'] = $this->database->error()[2];
-        }
-        else
-        {
-            $this->rt['error'] = 0;
-            $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
-        }
-        return $this->rt;
-    }
-
-    public function updateLoteSetProcessProceso($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
-    {
-        $this->setResult();
-        $this->database->update($this->table,[
-            'proceso_procesar' => 1,
-            'usuario_procesa' => $usuarioProcess,
-            'fecha_ini_procesa' => $fechaIniProcess,
-            'fecha_fin_procesa' => $fechaFinProcess
-        ], ['lote' => $lote]);
+            'proceso_trituracion' => 1,
+            'usuario_tritura' => $usuarioProcess,
+            'fecha_ini_tritura' => $fechaIniProcess,
+            'fecha_fin_tritura' => $fechaFinProcess
+        ], ['orden_id' => $idOdt]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
