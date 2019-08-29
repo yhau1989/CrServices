@@ -92,38 +92,13 @@ class TOrdenTrabajo
         return $this->rt;
     }
 
-    public function getLotesByPendingSeleccion()
+    
+    public function getODTByPendingTriturar()
     {
         $this->setResult();
         $data = $this->database->select($this->table,'*', [
-            'proceso_selecciona'=> 0, 
-            'proceso_procesar' => 0, 
-            'proceso_almacenar' => 0]
-        );
-
-        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-        {
-            $this->rt['error'] = $this->database->error()[1];
-            $this->rt['mensaje'] = $this->database->error()[2];
-        }
-        else
-        {
-            if($data && count($data) > 0)
-            {
-                $this->rt['error'] = 0;
-                $this->rt['data'] = $data;   
-            }
-        }
-        return $this->rt;
-    }
-
-    public function getLotesByPendingProcesar()
-    {
-        $this->setResult();
-        $data = $this->database->select($this->table,'*', [
-            'proceso_selecciona'=> 1, 
-            'proceso_procesar' => 0, 
-            'proceso_almacenar' => 0]
+            'proceso_trituracion' => 0,
+            'proceso_almacena' => 0]
         );
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -141,13 +116,13 @@ class TOrdenTrabajo
         return $this->rt;
     }
 
-    public function getLotesByPendingAlmacenar()
+    public function getODTByPendingAlmacenar()
     {
         $this->setResult();
         $data = $this->database->select($this->table,'*', [
-            'proceso_selecciona'=> 1, 
-            'proceso_procesar' => 1, 
-            'proceso_almacenar' => 0]
+                'proceso_trituracion' => 1,
+                'proceso_almacena' => 0
+            ]
         );
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -285,7 +260,7 @@ class TOrdenTrabajo
             if($resukl ['error'] == 0)
             {
                 $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                $this->rt['mensaje'] = "Datos grabados con éxito, Id de ODT generada: " . $idOdt;
                 $this->rt['data'] =  $idOdt;
             }
             else
