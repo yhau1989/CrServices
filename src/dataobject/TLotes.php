@@ -59,7 +59,7 @@ class TLotes
     public function getLotesByMaterial($material)
     {
         $this->setResult();
-        $data = $this->database->select($this->table,'*',['material' => $material]);
+        $data = $this->database->select($this->table,'*',['material' => $material, 'proceso_selecciona'=> 0]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {

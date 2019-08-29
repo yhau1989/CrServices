@@ -2,7 +2,7 @@
 
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/glob.php");
 include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/vendor/autoload.php");
-include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/src/dataobject/TStocks.php");
+include($_SERVER["DOCUMENT_ROOT"] . "/CrServices/src/dataobject/TLotes.php");
 use Medoo\Medoo;
 
 
@@ -281,7 +281,7 @@ class TOrdenTrabajo
         } else {
 
             $idOdt = $this->database->id();
-            $resukl = $this->insertODTLotes($idOdt,$lotes);
+            $resukl = $this->insertODTLotes($idOdt,$lotes, $usuarioSelecciona, $fecIniSeleccion, $fecFinSeleccion);
             if($resukl ['error'] == 0)
             {
                 $this->rt['error'] = 0;
@@ -298,7 +298,7 @@ class TOrdenTrabajo
     }
 
 
-    public function insertODTLotes($idOtd, $lotes)
+    public function insertODTLotes($idOtd, $lotes, $usuarioProceso, $incio, $fin )
     {
         $items = null; 
         foreach($lotes as $clave => $valor)
@@ -315,6 +315,12 @@ class TOrdenTrabajo
                 $this->rt['error'] = $this->database->error()[1];
                 $this->rt['mensaje'] = $this->database->error()[2];
             } else {
+
+                //Actualizar el proceso de seleccion del lote 
+                foreach ($lotes as $clave => $valor) {
+                    $tlotes = new TLotes();
+                    $tlotes->updateLoteSetProcessSeleccion($valor, $usuarioProceso, $incio, $fin);
+                }
 
                 $this->rt['error'] = 0;
                 $this->rt['mensaje'] = "Datos grabados con éxito..!!";

@@ -30,7 +30,8 @@ if($decode){
     else
     {
         $ft = new TOrdenTrabajo();
-        $response = $ft->insertODT($decode->odt->material, $decode->odt->peso,$decode->odt->user_selecciona,$decode->odt->fecini, $decode->odt->fecfin, $decode->odt->lotes);
+        $response = $ft->insertODT($decode->odt->material, $decode->odt->peso,$decode->odt->user_selecciona,
+        $decode->odt->fecini, $decode->odt->fecfin, $decode->odt->lotes);
     }    
 }
 else
