@@ -181,11 +181,42 @@ class TOrdenTrabajo
         }
         else
         {
+            
             $this->rt['error'] = 0;
             $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
+            $this->updateLotesTritura($idOdt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess);
         }
         return $this->rt;
     }
+
+
+    function updateLotesTritura($odt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
+    {
+        $this->setResult();
+        $data = $this->database->select('ordentrabajolotes', 'id_lote', ['id_orden_trabajo' => $odt]);
+
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+
+           
+            if ($data && count($data) > 0) {
+                $lotes = new TLotes();
+                foreach ($data as $clave => $valor) {
+                    $lotes->updateLoteSetProcessProceso($valor, $usuarioProcess, $fechaIniProcess, $fechaFinProcess);
+                }
+                $this->rt['error'] = 0;
+                $this->rt['data'] = null;
+            }
+        }
+        return $this->rt;
+    }
+
+
+
+
+
 
 
     public function updateLoteSetProcessAlmacena($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
