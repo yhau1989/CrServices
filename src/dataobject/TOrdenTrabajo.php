@@ -181,10 +181,11 @@ class TOrdenTrabajo
         }
         else
         {
+            $this->updateLotesTritura($idOdt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess);
             
             $this->rt['error'] = 0;
             $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
-            $this->updateLotesTritura($idOdt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess);
+            
         }
         return $this->rt;
     }
