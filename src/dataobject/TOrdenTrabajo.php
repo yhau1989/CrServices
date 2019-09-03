@@ -90,6 +90,23 @@ class TOrdenTrabajo
         return $this->rt;
     }
 
+    public function getODTById($idOdt)
+    {
+        $this->setResult();
+        $data = $this->database->select($this->table, '*', ['orden_id' => $idOdt]);
+
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+            if ($data && count($data) > 0) {
+                $this->rt['error'] = 0;
+                $this->rt['data'] = $data;
+            }
+        }
+        return $this->rt;
+    }
+
     
     public function getODTByPendingTriturar()
     {
@@ -182,7 +199,6 @@ class TOrdenTrabajo
         else
         {
             $this->updateLotesTritura($idOdt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess);
-            
             $this->rt['error'] = 0;
             $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
             
@@ -215,38 +231,63 @@ class TOrdenTrabajo
     }
 
 
-
-
-
-
-
-    public function updateLoteSetProcessAlmacena($lote, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
+    function updateLotesAlmacena($odt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess)
     {
         $this->setResult();
-        $material = $this->getLotesById($lote); //obtener el tipo de material
+        $data = $this->database->select('ordentrabajolotes', 'id_lote', ['id_orden_trabajo' => $odt]);
+
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+
+            if ($data && count($data) > 0) {
+                $lotes = new TLotes();
+                foreach ($data as $clave => $valor) {
+                    $lotes->updateLoteSetProcessAlmacena($valor, $usuarioProcess, $fechaIniProcess, $fechaFinProcess);
+                }
+                $this->rt['error'] = 0;
+                $this->rt['data'] = null;
+            }
+        }
+        return $this->rt;
+    }
+
+
+
+
+
+
+
+    public function updateODTSetProcessAlmacena($odt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess, $faltante)
+    {
+        $this->setResult();
+        $material = $this->getODTById($odt); //obtener el tipo de material
         $movimiento = array('error'=> -256,'mensaje' => null,'data' => null); 
 
         if($material['error'] == 0 &&  count($material['data']) > 0){
             $stock = new TStocks();
-            $movimiento = $stock->updateStocks($material['data'][0]['material'], $material['data'][0]['peso'], 'suma'); //movimiento de stock
+            $movimiento = $stock->updateStocks($material['data'][0]['tipo_material'], $material['data'][0]['peso_total'], 'suma'); //movimiento de stock
 
             if($movimiento['error'] == 0)
             {
                 $this->database->update($this->table,[
-                    'proceso_almacenar' => 1,
+                    'proceso_almacena' => 1,
                     'usuario_almacena' => $usuarioProcess,
                     'fecha_ini_almacena' => $fechaIniProcess,
-                    'fecha_fin_almacena' => $fechaFinProcess
-                ], ['lote' => $lote]);
+                    'fecha_fin_almacena' => $fechaFinProcess,
+                    'faltante' => $faltante
+                ], ['orden_id' => $odt]);
         
                 if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
                 {
-                    $movimiento = $stock->updateStocks($material['data'][0]['material'], $material['data'][0]['peso'], 'resta'); //RollBack
+                    $movimiento = $stock->updateStocks($material['data'][0]['tipo_material'], $material['data'][0]['peso_total'], 'resta'); //RollBack
                     $this->rt['error'] = $this->database->error()[1];
                     $this->rt['mensaje'] = $this->database->error()[2];
                 }
                 else
                 {
+                    $this->updateLotesAlmacena($odt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess);
                     $this->rt['error'] = 0;
                     $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
                 }    

@@ -221,8 +221,8 @@ class TVentas
                 if($det['error'] != 0)
                 {
                     $error = 1;
-                    $this->deleteVentas($idVenta);
                     $this->rollbackStockVentas($detalle, $limite);
+                    $this->deleteVentas($idVenta);
                     $this->rt = $det;
                     break;
                 }
@@ -280,7 +280,7 @@ class TVentas
     public function deleteVentas($idVenta)
     {
         $this->setResult();
-        $this->database->delete($this->table, ['AND' => ['id' => $idVenta]]);
+        $this->database->delete('ventas',['id' => $idVenta]);
 
         if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
 
@@ -305,7 +305,7 @@ class TVentas
             if($limit < $limite)
             {
                 $stock = new TStocks();
-                $movimiento = $stock->updateStocks($value->material, $value->peso, 'suma'); //RollBack
+                $movimiento = $stock->updateStocks($value->idmaterial, $value->peso, 'suma'); //RollBack
                 if ($movimiento['error'] == 0) {
                     $this->rt = $movimiento;
                 } else {
