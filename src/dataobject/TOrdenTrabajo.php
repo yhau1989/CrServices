@@ -259,48 +259,44 @@ class TOrdenTrabajo
 
 
 
-    public function updateODTSetProcessAlmacena($odt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess, $faltante)
+    public function updateODTSetProcessAlmacena($odt, $material, $peso , $usuarioProcess, $fechaIniProcess, $fechaFinProcess, $faltante)
     {
         $this->setResult();
-        $material = $this->getODTById($odt); //obtener el tipo de material
+        //$material = $this->getODTById($odt); //obtener el tipo de material
         $movimiento = array('error'=> -256,'mensaje' => null,'data' => null); 
 
-        if($material['error'] == 0 &&  count($material['data']) > 0){
-            $stock = new TStocks();
-            $movimiento = $stock->updateStocks($material['data'][0]['tipo_material'], $material['data'][0]['peso_total'], 'suma'); //movimiento de stock
 
-            if($movimiento['error'] == 0)
+        $stock = new TStocks();
+        $movimiento = $stock->updateStocks($material, $peso, 'suma'); //movimiento de stock
+
+        if($movimiento['error'] == 0)
+        {
+            $this->database->update($this->table,[
+                'proceso_almacena' => 1,
+                'usuario_almacena' => $usuarioProcess,
+                'fecha_ini_almacena' => $fechaIniProcess,
+                'fecha_fin_almacena' => $fechaFinProcess,
+                'faltante' => $faltante
+            ], ['orden_id' => $odt]);
+    
+            if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
             {
-                $this->database->update($this->table,[
-                    'proceso_almacena' => 1,
-                    'usuario_almacena' => $usuarioProcess,
-                    'fecha_ini_almacena' => $fechaIniProcess,
-                    'fecha_fin_almacena' => $fechaFinProcess,
-                    'faltante' => $faltante
-                ], ['orden_id' => $odt]);
-        
-                if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-                {
-                    $movimiento = $stock->updateStocks($material['data'][0]['tipo_material'], $material['data'][0]['peso_total'], 'resta'); //RollBack
-                    $this->rt['error'] = $this->database->error()[1];
-                    $this->rt['mensaje'] = $this->database->error()[2];
-                }
-                else
-                {
-                    $this->updateLotesAlmacena($odt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess);
-                    $this->rt['error'] = 0;
-                    $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
-                }    
+                $movimiento = $stock->updateStocks($material, $peso, 'resta'); //RollBack
+                $this->rt['error'] = $this->database->error()[1];
+                $this->rt['mensaje'] = $this->database->error()[2];
             }
             else
             {
-                $this->rt = $movimiento;
-            }
+                $this->updateLotesAlmacena($odt, $usuarioProcess, $fechaIniProcess, $fechaFinProcess);
+                $this->rt['error'] = 0;
+                $this->rt['mensaje'] = "Datos actualizados con éxito..!!";
+            }    
         }
         else
         {
-            $this->rt = $material;
+            $this->rt = $movimiento;
         }
+       
 
         return $this->rt;
 

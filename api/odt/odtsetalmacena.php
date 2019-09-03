@@ -11,7 +11,8 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $decode = json_decode(file_get_contents("php://input"));
 if ($decode) {
     if (!(isset($decode) || isset($decode->odt) || isset($decode->odt->id) || isset($decode->odt->usuario)
-        || isset($decode->odt->fini) || isset($decode->odt->ffin) || isset($decode->odt->faltante) )) {
+        || isset($decode->odt->fini) || isset($decode->odt->ffin) || isset($decode->odt->faltante)
+        || isset($decode->odt->material) || isset($decode->odt->peso) )) {
         $response = array(
             'error' => 'error',
             'mensaje' => 'Parametros de entrada incorrectos.'
@@ -19,7 +20,7 @@ if ($decode) {
     } else {
 
         $ft = new TOrdenTrabajo();
-        $response = $ft->updateODTSetProcessAlmacena($decode->odt->id, $decode->odt->usuario, $decode->odt->fini, $decode->odt->ffin, $decode->odt->faltante);
+        $response = $ft->updateODTSetProcessAlmacena($decode->odt->id, $decode->odt->material, $decode->odt->peso, $decode->odt->usuario, $decode->odt->fini, $decode->odt->ffin, $decode->odt->faltante);
         
     }
 } else {
