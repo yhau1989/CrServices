@@ -14,7 +14,7 @@ $decode = json_decode(file_get_contents("php://input"));
 
 if($decode){
     if (!(isset($decode) || isset($decode->proveedor) || isset($decode->proveedor->ruc) || isset($decode->proveedor->nombres) 
-    || isset($decode->proveedor->apellidos) || isset($decode->proveedor->direccion) || isset($decode->proveedor->telefono)))
+    || isset($decode->proveedor->apellidos) || isset($decode->proveedor->direccion) || isset($decode->proveedor->telefono) || isset($decode->proveedor->estado)))
     {
        $response = array(
            'error' => 'error',
@@ -24,7 +24,9 @@ if($decode){
     else
     {
         $ft = new TProveedores();
-        $response = $ft->insertProveedor($decode->proveedor->ruc, $decode->proveedor->nombres, $decode->proveedor->apellidos, $decode->proveedor->direccion, $decode->proveedor->telefono);     
+        $response = $ft->insertProveedor($decode->proveedor->ruc, $decode->proveedor->nombres, 
+                                         $decode->proveedor->apellidos, $decode->proveedor->direccion, 
+                                         $decode->proveedor->telefono, $decode->proveedor->estado);     
     }    
 }
 else

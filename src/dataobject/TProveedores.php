@@ -96,7 +96,7 @@ class TProveedores
     }
 
    
-    public function insertProveedor($ruc, $nombres, $apellidos, $direccion, $telefono)
+    public function insertProveedor($ruc, $nombres, $apellidos, $direccion, $telefono, $estado)
     {
         $this->setResult();
         $this->database->insert($this->table,[
@@ -104,7 +104,8 @@ class TProveedores
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
             'direccion' => $direccion, 
-            'telefono' => $telefono
+            'telefono' => $telefono,
+            'estado' => $estado
         ]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
@@ -120,7 +121,7 @@ class TProveedores
         return $this->rt;
     }
 
-    public function updateProveedor($id, $ruc, $nombres, $apellidos, $direccion, $telefono)
+    public function updateProveedor($id, $ruc, $nombres, $apellidos, $direccion, $telefono, $estado)
     {
         $this->setResult();
         $this->database->update($this->table,[
@@ -128,7 +129,8 @@ class TProveedores
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
             'direccion' => $direccion, 
-            'telefono' => $telefono
+            'telefono' => $telefono,
+            'estado' => $estado
         ], ['id' => $id]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
