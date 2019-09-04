@@ -57,6 +57,22 @@ class TMateriales
         return $this->rt;
     }
 
+    public function getMaterialesMant()
+    {
+        $this->setResult();
+        $data = $this->database->select($this->table, '*');
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+            if ($data && count($data) > 0) {
+                $this->rt['error'] = 0;
+                $this->rt['data'] = $data;
+            }
+        }
+        return $this->rt;
+    }
+
     public function getMaterialesById($id)
     {
         $this->setResult();
@@ -78,10 +94,10 @@ class TMateriales
     }
 
        
-    public function insertMaterial($tipo)
+    public function insertMaterial($tipo, $estado)
     {
         $this->setResult();
-        $this->database->insert($this->table,['tipo' => $tipo]);
+        $this->database->insert($this->table,['tipo' => $tipo, 'estado' => $estado]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
@@ -101,10 +117,10 @@ class TMateriales
         return $this->rt;
     }
 
-    public function updateMaterial($id, $tipo)
+    public function updateMaterial($id, $tipo, $estado)
     {
         $this->setResult();
-        $data = $this->database->update($this->table,['tipo' => $tipo], ['id' => $id]);
+        $data = $this->database->update($this->table,['tipo' => $tipo, 'estado' => $estado], ['id' => $id]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {

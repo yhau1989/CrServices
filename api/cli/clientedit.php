@@ -14,7 +14,7 @@ $decode = json_decode(file_get_contents("php://input"));
 
 if($decode){
     if (!(isset($decode) || isset($decode->cliente) || isset($decode->cliente->id) || isset($decode->cliente->ruc) || isset($decode->cliente->nombres) 
-    || isset($decode->cliente->apellidos) || isset($decode->cliente->direccion) || isset($decode->cliente->telefono)))
+    || isset($decode->cliente->apellidos) || isset($decode->cliente->direccion) || isset($decode->cliente->telefono) || isset($decode->cliente->estado)))
     {
        $response = array(
            'error' => 'error',
@@ -24,7 +24,10 @@ if($decode){
     else
     {
         $ft = new TClientes();
-        $response = $ft->updateCliente($decode->cliente->id,$decode->cliente->ruc, $decode->cliente->nombres, $decode->cliente->apellidos, $decode->cliente->direccion, $decode->cliente->telefono);     
+        $response = $ft->updateCliente($decode->cliente->id,$decode->cliente->ruc, 
+                                        $decode->cliente->nombres, $decode->cliente->apellidos, 
+                                        $decode->cliente->direccion, $decode->cliente->telefono,
+                                        $decode->cliente->estado);     
     }    
 }
 else

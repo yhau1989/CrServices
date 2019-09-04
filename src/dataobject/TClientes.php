@@ -55,6 +55,22 @@ class TClientes
         return $this->rt;
     }
 
+    public function getClientesMant()
+    {
+        $this->setResult();
+        $data = $this->database->select($this->table, '*');
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+            if ($data && count($data) > 0) {
+                $this->rt['error'] = 0;
+                $this->rt['data'] = $data;
+            }
+        }
+        return $this->rt;
+    }
+
     public function getClientesById($id)
     {
         $this->setResult();
@@ -96,7 +112,7 @@ class TClientes
     }
 
    
-    public function insertCliente($ruc, $nombres, $apellidos, $direccion, $telefono)
+    public function insertCliente($ruc, $nombres, $apellidos, $direccion, $telefono, $estado)
     {
         $this->setResult();
         $this->database->insert($this->table,[
@@ -104,7 +120,8 @@ class TClientes
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
             'direccion' => $direccion, 
-            'telefono' => $telefono
+            'telefono' => $telefono,
+            'estado' => $estado
         ]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
@@ -120,7 +137,7 @@ class TClientes
         return $this->rt;
     }
 
-    public function updateCliente($id, $ruc, $nombres, $apellidos, $direccion, $telefono)
+    public function updateCliente($id, $ruc, $nombres, $apellidos, $direccion, $telefono, $estado)
     {
         $this->setResult();
         $this->database->update($this->table,[
@@ -128,7 +145,8 @@ class TClientes
             'nombres' => $nombres, 
             'apellidos' => $apellidos, 
             'direccion' => $direccion, 
-            'telefono' => $telefono
+            'telefono' => $telefono,
+            'estado' => $estado
         ], ['id' => $id]);
 
         if(count($this->database->error()) > 0 && isset($this->database->error()[1]))

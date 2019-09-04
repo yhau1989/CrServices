@@ -12,7 +12,7 @@ $decode = json_decode(file_get_contents("php://input"));
 
 
 if($decode){
-    if (!(isset($decode) || isset($decode->mrt) || isset($decode->mtr->tipo))) 
+    if (!(isset($decode) || isset($decode->mrt) || isset($decode->mtr->tipo) || isset($decode->mtr->estado))) 
     {
        $response = array(
            'error' => 'error',
@@ -22,7 +22,7 @@ if($decode){
     else
     {
         $ft = new TMateriales();
-        $response = $ft->insertMaterial($decode->mtr->tipo);     
+        $response = $ft->insertMaterial($decode->mtr->tipo, $decode->mtr->estado);     
     }    
 }
 else
