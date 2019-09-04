@@ -55,6 +55,26 @@ class TProveedores
         return $this->rt;
     }
 
+    public function getProveedoresMant()
+    {
+        $this->setResult();
+        $data = $this->database->select($this->table,'*');
+        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
+        {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        }
+        else
+        {
+            if($data && count($data) > 0)
+            {
+                $this->rt['error'] = 0;
+                $this->rt['data'] = $data;   
+            }
+        }
+        return $this->rt;
+    }
+
     public function getProveedoresById($id)
     {
         $this->setResult();
