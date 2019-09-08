@@ -10,10 +10,17 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 $decode = json_decode(file_get_contents("php://input"));
 
-//ruc, nombres, apellidos, direccion, telefono
 
 if($decode){
-    if (!(isset($decode) || isset($decode->compra) || isset($decode->compra->proveedor) || isset($decode->compra->material) || isset($decode->compra->valor) || isset($decode->compra->peso) || isset($decode->compra->comprador)))
+    if (!(isset($decode) 
+            || isset($decode->compra) 
+            || isset($decode->compra->proveedor) 
+            || isset($decode->compra->material) 
+            || isset($decode->compra->valor) 
+            || isset($decode->compra->peso) 
+            || isset($decode->compra->comprador)
+            || isset($decode->compra->items)
+            ))
     {
        $response = array(
            'error' => 'error',
@@ -23,7 +30,11 @@ if($decode){
     else
     {
         $ft = new TCompras();
-        $response = $ft->insertCompra($decode->compra->proveedor, $decode->compra->valor, $decode->compra->material, $decode->compra->peso,  $decode->compra->comprador);
+        $response = $ft->insertCompra($decode->compra->proveedor, 
+                                      $decode->compra->valor, 
+                                      $decode->compra->peso,  
+                                      $decode->compra->comprador,
+                                      $decode->compra->items);
     }    
 }
 else

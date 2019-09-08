@@ -156,65 +156,179 @@ class TCompras
     }
 
    
-    public function insertCompra($proveedor, $valor_total, $material, $peso, $usuarioCompra)
-    {
+    public function insertCompra($proveedor, $valor_total, $peso, $usuarioCompra, $items)
+    {    
         $this->setResult();
-        $lote =  $this->insertPreLote($material, $peso);
+        $this->database->insert($this->table,[
+            'proveedor' => $proveedor, 
+            'valor_total' => $valor_total,
+            'peso_total' => $peso,
+            'usuario_compra' => $usuarioCompra
+        ]);
 
-        if($lote['error'] == 0)
+        if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
         {
-            $this->setResult();
-            $this->database->insert($this->table,[
-                'proveedor' => $proveedor, 
-                'lote' => $lote['data'], 
-                'valor_total' => $valor_total,
-                'usuario_compra' => $usuarioCompra
-            ]);
-    
-            if(count($this->database->error()) > 0 && isset($this->database->error()[1]))
-            {
-                $this->rt['error'] = $this->database->error()[1];
-                $this->rt['mensaje'] = $this->database->error()[2];
-            }
-            else
-            {
-                $this->rt['error'] = 0;
-                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
-            }
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
         }
         else
         {
-            $this->rt = $lote;
+            $this->rt['error'] = 0;
+            $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+            $idCompra = $this->database->id();
+            $prelotes = $this->insertPreLotes($idCompra, $items) ; //insertamos los lotes 
+
+            if($prelotes['error'] == 0)
+            {
+                $detalleStatus = $this->insertCompraDetalles($idCompra, $items);
+                if($detalleStatus['error'] == 0)
+                {
+                    $this->rt['error'] = 0;
+                    $this->rt['mensaje'] = "Datos grabados con éxito, id de compra: " . $idCompra;
+                    $this->rt['data'] =  null;
+                }
+                else
+                {
+                    $this->deletLotesByIdCompra($idCompra); //rollback lotes
+                    $this->deleteCompraById($idCompra); //rollback compra
+                    $this->rt =  $detalleStatus;
+                }
+            }
+            else{
+                $this->deleteCompraById($idCompra); //rollBack compra cabecera
+                $this->rt = $prelotes;
+            }
         }
         return $this->rt;
     }
 
     
 
-    public function insertPreLote($material, $peso)
+    public function insertPreLotes($idCompra, $items)
+    {
+        foreach ($items as $key => $value) 
+        {
+            $this->setResult();
+            $this->database->insert(
+                'lotes',
+                [
+                    'id_compra' => $idCompra,
+                    'material' => $value->material,
+                    'peso' => $value->peso
+                ]
+            );
+
+            if (count($this->database->error()) > 0 && isset($this->database->error()[1])) 
+            {
+                $errorStPreLote = $this->database->error()[1];
+                $errorprelote = $this->database->error()[2];
+                $this->deletLotesByIdCompra($idCompra); //rollBack Lotes
+
+                $this->rt['error'] = $errorStPreLote;
+                $this->rt['mensaje'] = $errorprelote;
+                $this->rt['data'] =  null;
+
+                break;
+            } else {
+                $this->rt['error'] = 0;
+                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                $this->rt['data'] =  null;
+            }
+        }
+        return $this->rt;
+    }
+
+    private function deletLotesByIdCompra($idCompra)
     {
         $this->setResult();
-        $this->database->insert('lotes' ,[
-            'material' => $material,
-            'peso' => $peso
-        ]);
+        $this->database->delete('lotes', array('id_compra' => $idCompra));
 
         if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
             $this->rt['error'] = $this->database->error()[1];
             $this->rt['mensaje'] = $this->database->error()[2];
         } else {
             $this->rt['error'] = 0;
-            $this->rt['mensaje'] = "Datos grabados con éxito..!!";
-            $this->rt['data'] =   $this->database->id();
+            $this->rt['mensaje'] = "Datos eliminados con éxito..!!";
+            $this->rt['data'] =  null;
         }
         return $this->rt;
     }
 
 
+    public function deleteCompraById($idCompra)
+    {
+        $this->setResult();
+        $this->database->delete($this->table, array('id' => $idCompra));
+
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+            $this->rt['error'] = 0;
+            $this->rt['mensaje'] = "Datos eliminados con éxito..!!";
+            $this->rt['data'] =  null;
+        }
+
+        return $this->rt;
+    }
 
 
 
+    public function insertCompraDetalles($idCompra, $items)
+    {
+        foreach ($items as $key => $value) {
+            $this->setResult();
+            $this->database->insert(
+                'compradetalle',
+                [
+                    'id_compra' => $idCompra,
+                    'id_material' => $value->material,
+                    'peso' => $value->peso,
+                    'valor' => $value->valor,
+                    'iva' => $value->iva,
+                    'valor_total' => $value->valor_total,
+                ]
+            );
 
+            if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+                $errorDetalle = $this->database->error()[1];
+                $errorDetalleMsg = $this->database->error()[2] ;
+                $this->deletLotesByIdCompra($idCompra); //rollBack Lotes
+
+                $this->rt['error'] = $errorDetalle;
+                $this->rt['mensaje'] = $errorDetalleMsg;
+                $this->rt['data'] =  null;
+
+                break;
+            } else {
+                $this->rt['error'] = 0;
+                $this->rt['mensaje'] = "Datos grabados con éxito..!!";
+                $this->rt['data'] =  null;
+            }
+        }
+        return $this->rt;
+    }
+
+
+    public function deleteDetalleCompraByIdCompra($idCompra)
+    {
+        $this->setResult();
+        $this->database->delete('compradetalle', array('id_compra' => $idCompra));
+
+        if (count($this->database->error()) > 0 && isset($this->database->error()[1])) {
+            $this->rt['error'] = $this->database->error()[1];
+            $this->rt['mensaje'] = $this->database->error()[2];
+        } else {
+            $this->rt['error'] = 0;
+            $this->rt['mensaje'] = "Datos eliminados con éxito..!!";
+            $this->rt['data'] =  null;
+        }
+
+        return $this->rt;
+    }
+
+
+    
 
 }
 
