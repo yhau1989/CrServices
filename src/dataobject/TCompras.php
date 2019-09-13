@@ -66,7 +66,7 @@ class TCompras
                 "[><]usuario" => ["compras.usuario_compra" => "id"],
                 "[><]proveedor" => ["compras.proveedor" => "id"]
             ],
-            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.lote', 'compras.fecha_compra',
+            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.peso_total', 'compras.valor_total' ,'compras.fecha_compra',
             'usuario.nombres(usr_nombre)', 'usuario.apellidos(usr_apellido)'],
             ['compras.fecha_compra[<>]' => [$fini,$ffin]]
             );
@@ -77,7 +77,7 @@ class TCompras
                 "[><]usuario" => ["compras.usuario_compra" => "id"],
                 "[><]proveedor" => ["compras.proveedor" => "id"]
             ],
-            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.lote', 'compras.fecha_compra',
+            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.peso_total', 'compras.valor_total','compras.fecha_compra',
             'usuario.nombres(usr_nombre)', 'usuario.apellidos(usr_apellido)'],
             ['compras.fecha_compra[>=]' => $fini]
             );
@@ -88,7 +88,7 @@ class TCompras
                 "[><]usuario" => ["compras.usuario_compra" => "id"],
                 "[><]proveedor" => ["compras.proveedor" => "id"]
             ],
-            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.lote', 'compras.fecha_compra',
+            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.peso_total', 'compras.valor_total', 'compras.fecha_compra',
             'usuario.nombres(usr_nombre)', 'usuario.apellidos(usr_apellido)'],
             ['compras.fecha_compra[<=]' => $ffin]
             );
@@ -99,7 +99,7 @@ class TCompras
                 "[><]usuario" => ["compras.usuario_compra" => "id"],
                 "[><]proveedor" => ["compras.proveedor" => "id"]
             ],
-            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.lote', 'compras.fecha_compra',
+            ['compras.id', 'proveedor.nombres(prov_nombre)', 'proveedor.apellidos(proc_apellidoo)', 'compras.peso_total', 'compras.valor_total', 'compras.fecha_compra',
             'usuario.nombres(usr_nombre)', 'usuario.apellidos(usr_apellido)']);
         }
 
